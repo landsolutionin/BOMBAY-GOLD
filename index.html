@@ -106,9 +106,9 @@ onValue(ref(db,"results"), (snapshot) => {
 const data = snapshot.val();
 
 if(data){
-document.getElementById("mmc").innerText = data.cmm;
-document.getElementById("ffl").innerText = data.lff;
-document.getElementById("mumbai").innerText = data.mumbai;
+document.getElementById("cmm").innerText = data?.cmm || "No Data";
+document.getElementById("lff").innerText = data?.lff || "No Data";
+document.getElementById("mumbai").innerText = data?.mumbai || "No Data";
 }
 
 });
