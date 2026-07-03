@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,6 +26,7 @@ padding:20px;
 border-radius:15px;
 margin-bottom:20px;
 text-align:center;
+box-shadow:0 10px 20px rgba(0,0,0,.3);
 }
 
 .grid{
@@ -39,6 +40,12 @@ font-size:40px;
 font-weight:bold;
 color:red;
 }
+
+@media(max-width:768px){
+.result{
+font-size:28px;
+}
+}
 </style>
 </head>
 <body>
@@ -47,6 +54,7 @@ color:red;
 
 <div class="card">
 <h1>🔥 LIVE RESULT BOARD 🔥</h1>
+<p>Realtime Auto Update</p>
 </div>
 
 <div class="grid">
@@ -73,6 +81,7 @@ color:red;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
 getDatabase,
 ref,
@@ -92,12 +101,16 @@ appId: "1:464276956164:web:68a0c1b7648e8d9f45c151"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-onValue(ref(db,"results"),(snapshot)=>{
+onValue(ref(db,"results"), (snapshot) => {
+
 const data = snapshot.val();
 
+if(data){
 document.getElementById("cmm").innerText = data.cmm;
 document.getElementById("lff").innerText = data.lff;
 document.getElementById("mumbai").innerText = data.mumbai;
+}
+
 });
 
 </script>
