@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel</title>
-
 <style>
 body{
 font-family:sans-serif;
@@ -12,49 +9,29 @@ background:#111;
 color:white;
 padding:20px;
 }
-
-.container{
-max-width:500px;
-margin:auto;
-}
-
 input{
 width:100%;
 padding:15px;
 margin:10px 0;
-border:none;
-border-radius:8px;
 }
-
 button{
-width:100%;
 padding:15px;
 background:red;
 color:white;
 border:none;
 cursor:pointer;
-font-size:18px;
-border-radius:8px;
-}
-
-button:hover{
-opacity:.9;
 }
 </style>
 </head>
 <body>
 
-<div class="container">
-
 <h1>Admin Panel</h1>
 
-<input id="mmc" placeholder="MMC Result">
-<input id="ffl" placeholder="FFL Result">
+<input id="cmm" placeholder="CMM Result">
+<input id="lff" placeholder="LFF Result">
 <input id="mumbai" placeholder="Mumbai Result">
 
 <button onclick="saveResult()">Save Result</button>
-
-</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -78,14 +55,13 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 window.saveResult = function(){
-
-const mmc = document.getElementById("mmc").value;
-const ffl = document.getElementById("ffl").value;
+const cmm = document.getElementById("cmm").value;
+const lff = document.getElementById("lff").value;
 const mumbai = document.getElementById("mumbai").value;
 
 set(ref(db,"results"),{
-mmc:mmc,
-ffl:ffl,
+cmm:cmm,
+lff:lff,
 mumbai:mumbai
 });
 
