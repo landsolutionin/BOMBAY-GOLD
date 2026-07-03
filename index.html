@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Result Board</title>
+<title>Live Result Board Pro</title>
 
 <style>
 *{
@@ -31,7 +31,6 @@ margin-bottom:30px;
 
 .header h1{
 font-size:38px;
-font-weight:bold;
 }
 
 .live-box{
@@ -39,14 +38,9 @@ background:white;
 color:black;
 padding:20px;
 border-radius:15px;
-margin-bottom:20px;
 text-align:center;
-box-shadow:0 10px 25px rgba(0,0,0,.3);
-}
-
-.live-box h2{
-font-size:28px;
-margin-bottom:10px;
+margin-bottom:20px;
+box-shadow:0 10px 20px rgba(0,0,0,.3);
 }
 
 .result-grid{
@@ -57,8 +51,8 @@ margin-bottom:30px;
 }
 
 .result-card{
-background:#fff;
-color:#111;
+background:white;
+color:black;
 padding:20px;
 border-radius:15px;
 text-align:center;
@@ -82,17 +76,22 @@ margin-top:15px;
 }
 
 button{
-padding:14px 25px;
+padding:12px 20px;
 border:none;
 border-radius:10px;
+cursor:pointer;
 background:black;
 color:white;
-font-size:18px;
-cursor:pointer;
+font-size:16px;
+margin:5px;
 }
 
-button:hover{
-opacity:.9;
+input{
+padding:12px;
+width:100%;
+margin:8px 0;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
 table{
@@ -101,7 +100,7 @@ background:white;
 color:black;
 border-radius:15px;
 overflow:hidden;
-margin-top:30px;
+margin-top:20px;
 }
 
 th,td{
@@ -115,6 +114,14 @@ background:black;
 color:white;
 }
 
+.admin-panel{
+background:white;
+color:black;
+padding:20px;
+border-radius:15px;
+margin-top:30px;
+}
+
 @media(max-width:768px){
 .header h1{
 font-size:28px;
@@ -125,7 +132,6 @@ font-size:28px;
 }
 </style>
 </head>
-
 <body>
 
 <div class="container">
@@ -146,17 +152,17 @@ font-size:28px;
 
 <div class="result-card">
 <h3>CMM</h3>
-<div class="result-number" id="cmm">367-6</div>
+<div class="result-number" id="cmm">000-0</div>
 </div>
 
 <div class="result-card">
 <h3>LFF</h3>
-<div class="result-number" id="lff">221-4</div>
+<div class="result-number" id="lff">000-0</div>
 </div>
 
 <div class="result-card">
 <h3>Mumbai Bazar</h3>
-<div class="result-number" id="mumbai">450-9</div>
+<div class="result-number" id="mumbai">000-0</div>
 </div>
 
 </div>
@@ -175,90 +181,103 @@ font-size:28px;
 </thead>
 
 <tbody id="historyTable">
-
-<tr>
-<td>1</td>
-<td>10:00 AM</td>
-<td>CMM</td>
-<td>367-6</td>
-</tr>
-
-<tr>
-<td>2</td>
-<td>10:10 AM</td>
-<td>LFF</td>
-<td>221-4</td>
-</tr>
-
-<tr>
-<td>3</td>
-<td>10:20 AM</td>
-<td>Mumbai</td>
-<td>450-9</td>
-</tr>
-
 </tbody>
 </table>
 </div>
+
+<div class="admin-panel">
+<h2>Admin Panel</h2>
+
+<input type="password" id="adminPass" placeholder="Admin Password">
+
+<input type="text" id="newCmm" placeholder="New CMM Result">
+<input type="text" id="newLff" placeholder="New LFF Result">
+<input type="text" id="newMumbai" placeholder="New Mumbai Result">
+
+<button onclick="saveResults()">Save Result</button>
+</div>
+
+</div>
+
 <script>
 
 let count = 10;
-let serial = 4;
+let historyCount = 1;
 
-function randomResult(){
-let num1 = Math.floor(Math.random()*900)+100;
-let num2 = Math.floor(Math.random()*9)+1;
-return num1 + "-" + num2;
-}
+function loadSavedResults(){
 
-function updateResults(){
-
-let cmm = randomResult();
-let lff = randomResult();
-let mumbai = randomResult();
+let cmm = localStorage.getItem("cmm") || "367-6";
+let lff = localStorage.getItem("lff") || "221-4";
+let mumbai = localStorage.getItem("mumbai") || "450-9";
 
 document.getElementById("cmm").innerText = cmm;
 document.getElementById("lff").innerText = lff;
 document.getElementById("mumbai").innerText = mumbai;
+}
 
-let now = new Date().toLocaleTimeString();
+function updateResults(){
 
-let table = document.getElementById("historyTable");
+let cmm = document.getElementById("cmm").innerText;
+let lff = document.getElementById("lff").innerText;
+let mumbai = document.getElementById("mumbai").innerText;
 
-table.innerHTML += `
-<tr>
-<td>${serial++}</td>
-<td>${now}</td>
-<td>CMM</td>
-<td>${cmm}</td>
-</tr>
+let time = new Date().toLocaleTimeString();
 
-<tr>
-<td>${serial++}</td>
-<td>${now}</td>
-<td>LFF</td>
-<td>${lff}</td>
-</tr>
-
-<tr>
-<td>${serial++}</td>
-<td>${now}</td>
-<td>Mumbai</td>
-<td>${mumbai}</td>
-</tr>
-`;
-
-localStorage.setItem("history", table.innerHTML);
+addHistory("CMM", cmm, time);
+addHistory("LFF", lff, time);
+addHistory("Mumbai", mumbai, time);
 
 count = 10;
 }
 
-let savedHistory = localStorage.getItem("history");
+function addHistory(game,result,time){
 
-if(savedHistory){
-document.getElementById("historyTable").innerHTML = savedHistory;
+let table = document.getElementById("historyTable");
+
+let row = `
+<tr>
+<td>${historyCount++}</td>
+<td>${time}</td>
+<td>${game}</td>
+<td>${result}</td>
+</tr>
+`;
+
+table.innerHTML = row + table.innerHTML;
 }
-  setInterval(function(){
+
+function saveResults(){
+
+let pass = document.getElementById("adminPass").value;
+
+if(pass !== "admin123"){
+alert("Wrong Password");
+return;
+}
+
+let cmm = document.getElementById("newCmm").value;
+let lff = document.getElementById("newLff").value;
+let mumbai = document.getElementById("newMumbai").value;
+
+if(cmm){
+document.getElementById("cmm").innerText = cmm;
+localStorage.setItem("cmm", cmm);
+}
+
+if(lff){
+document.getElementById("lff").innerText = lff;
+localStorage.setItem("lff", lff);
+}
+
+if(mumbai){
+document.getElementById("mumbai").innerText = mumbai;
+localStorage.setItem("mumbai", mumbai);
+}
+
+alert("Result Updated Successfully");
+}
+
+setInterval(function(){
 
 count--;
 
@@ -271,11 +290,9 @@ updateResults();
 
 },1000);
 
-setInterval(updateResults,10000);
+loadSavedResults();
 
 </script>
-
-</div>
 
 </body>
 </html>
