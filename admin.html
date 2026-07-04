@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel</title>
+
 <style>
 body{
 font-family:sans-serif;
@@ -9,31 +12,78 @@ background:#111;
 color:white;
 padding:20px;
 }
+
+.container{
+max-width:700px;
+margin:auto;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
 input{
 width:100%;
 padding:15px;
 margin:10px 0;
+border:none;
+border-radius:10px;
 }
+
 button{
 padding:15px;
 background:red;
 color:white;
 border:none;
+border-radius:10px;
 cursor:pointer;
+width:100%;
+font-size:18px;
+}
+
+button:hover{
+opacity:.9;
 }
 </style>
 </head>
 <body>
 
-<h1>Admin Panel</h1>
+<div class="container">
 
-<input id="cmm" placeholder="CMM Result">
-<input id="lff" placeholder="LFF Result">
+<div class="card">
+<h1>Admin Panel</h1>
+<p>Manual Override System</p>
+</div>
+
+<!-- Result Inputs -->
+<div class="card">
+<h2>Result Update</h2>
+
+<input id="mmc" placeholder="MMC Result">
+<input id="ffl" placeholder="FFL Result">
 <input id="mumbai" placeholder="Mumbai Result">
 
 <button onclick="saveResult()">Save Result</button>
+</div>
+
+<!-- Manual Sports -->
+<div class="card">
+<h2>Manual Live Update</h2>
+
+<input id="cricket" placeholder="Cricket Score">
+<input id="football" placeholder="Football Score">
+<input id="weather" placeholder="Weather Update">
+
+<button onclick="saveManual()">Save Manual Data</button>
+</div>
+
+</div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
 getDatabase,
@@ -55,18 +105,35 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 window.saveResult = function(){
-const cmm = document.getElementById("cmm").value;
-const lff = document.getElementById("lff").value;
+
+const mmc = document.getElementById("mmc").value;
+const ffl = document.getElementById("ffl").value;
 const mumbai = document.getElementById("mumbai").value;
 
 set(ref(db,"results"),{
-cmm:cmm,
-lff:lff,
+mmc:mmc,
+ffl:ffl,
 mumbai:mumbai
 });
 
 alert("Result Updated Successfully");
 }
+
+window.saveManual = function(){
+
+const cricket = document.getElementById("cricket").value;
+const football = document.getElementById("football").value;
+const weather = document.getElementById("weather").value;
+
+set(ref(db,"manual"),{
+cricket:cricket,
+football:football,
+weather:weather
+});
+
+alert("Manual Data Updated Successfully");
+}
+
 </script>
 
 </body>
