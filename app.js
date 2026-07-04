@@ -13,3 +13,10 @@ fetchWeather,
 updateManualWeather
 
 } from "./weather.js";
+onValue(ref(db,"manual"),(snapshot)=>{
+
+const data=snapshot.val();
+
+updateManualWeather(data);
+
+});
