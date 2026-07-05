@@ -1,60 +1,160 @@
-// Firebase SDK
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+/* ================================================= */
+/* Firebase Configuration */
+/* ================================================= */
 
-import {
-getDatabase,
-ref,
-set,
-get,
-push,
-remove,
-update,
-onValue
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-// Firebase Configuration
 const firebaseConfig = {
 
-apiKey: "AIzaSyDS5w8TPFVLoy1i-RFJlRaCY_8LG9Xmpuw",
+    apiKey: "",
 
-authDomain: "liveresultboard.firebaseapp.com",
+    authDomain: "",
 
-databaseURL: "https://liveresultboard-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "",
 
-projectId: "liveresultboard",
+    storageBucket: "",
 
-storageBucket: "liveresultboard.firebasestorage.app",
+    messagingSenderId: "",
 
-messagingSenderId: "464276956164",
+    appId: "",
 
-appId: "1:464276956164:web:68a0c1b7648e8d9f45c151"
+    databaseURL: ""
+
+};
+
+
+/* ================================================= */
+/* Initialize Firebase */
+/* ================================================= */
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+
+/* ================================================= */
+/* Collections */
+/* ================================================= */
+
+const COLLECTIONS = {
+
+    settings: "settings",
+
+    results: "results",
+
+    notices: "notices",
+
+    liveResults: "liveResults",
+
+    oldResults: "oldResults"
 
 };
 
-// Initialize Firebase
 
-const app = initializeApp(firebaseConfig);
+/* ================================================= */
+/* Global Settings Object */
+/* ================================================= */
 
-const db = getDatabase(app);
+let siteSettings = {};
+/* ================================================= */
+/* Firebase Helper Functions */
+/* ================================================= */
 
-// Export
+async function loadSiteSettings() {
 
-export {
+    try {
 
-db,
+        const doc = await db
+            .collection(COLLECTIONS.settings)
+            .doc("website")
+            .get();
 
-ref,
+        if (doc.exists) {
 
-set,
+            siteSettings = doc.data();
 
-get,
+        } else {
 
-push,
+            siteSettings = {};
 
-remove,
+        }
 
-update,
+        return siteSettings;
 
-onValue
+    } catch (error) {
 
-};
+        console.error("Settings Load Error :", error);
+
+        return {};
+
+    }
+
+}
+
+
+/* ================================================= */
+/* Get Collection Data */
+/* ================================================= */
+
+async function getCollection(collectionName) {
+
+    try {
+
+        const snapshot = await db
+            .collection(collectionName)
+            .get();
+
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+    } catch (error) {
+
+        console.error(error);
+
+        return [];
+
+    }
+
+}
+
+
+/* ================================================= */
+/* Save Document */
+/* ================================================= */
+
+async function saveDocument(collectionName, documentId, data) {
+
+    return db
+        .collection(collectionName)
+        .doc(documentId)
+        .set(data, { merge: true });
+
+}
+
+
+/* ================================================= */
+/* Delete Document */
+/* ================================================= */
+
+async function deleteDocument(collectionName, documentId) {
+
+    return db
+        .collection(collectionName)
+        .doc(documentId)
+        .delete();
+
+}
+
+
+/* ================================================= */
+/* Listen Live Updates */
+/* ================================================= */
+
+function listenCollection(collectionName, callback) {
+
+    return db
+        .collection(collectionName)
+        .onSnapshot(callback);
+
+}
+
