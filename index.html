@@ -1,637 +1,136 @@
 <!DOCTYPE html>
-<html lang="bn">
-
+<html lang="en">
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Ultimate Live Dashboard</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-
-background:#0f172a;
-
-color:#fff;
-
-}
-
-header{
-
-background:#b91c1c;
-
-padding:20px;
-
-text-align:center;
-
-box-shadow:0 5px 15px rgba(0,0,0,.3);
-
-}
-
-#bannerTitle{
-
-font-size:35px;
-
-font-weight:bold;
-
-}
-
-#bannerSubtitle{
-
-margin-top:8px;
-
-font-size:18px;
-
-opacity:.9;
-
-}
-
-.notice{
-
-background:#facc15;
-
-color:#000;
-
-padding:12px;
-
-font-weight:bold;
-
-overflow:hidden;
-
-white-space:nowrap;
-
-}
-
-.notice span{
-
-display:inline-block;
-
-padding-left:100%;
-
-animation:marquee 18s linear infinite;
-
-}
-
-@keyframes marquee{
-
-0%{transform:translateX(0);}
-
-100%{transform:translateX(-100%);}
-
-}
-
-.menu{
-
-display:flex;
-
-justify-content:center;
-
-flex-wrap:wrap;
-
-gap:12px;
-
-padding:20px;
-
-}
-
-.menu button{
-
-padding:12px 20px;
-
-border:none;
-
-border-radius:10px;
-
-background:#1e293b;
-
-color:white;
-
-font-size:16px;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.menu button:hover{
-
-background:#dc2626;
-
-}
-
-.section{
-
-display:none;
-
-padding:20px;
-
-}
-
-.active{
-
-display:block;
-
-}
-
-.grid{
-
-display:grid;
-
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-
-gap:20px;
-
-}
-
-.card{
-
-background:white;
-
-color:black;
-
-padding:20px;
-
-border-radius:15px;
-
-text-align:center;
-
-box-shadow:0 10px 20px rgba(0,0,0,.25);
-
-}
-
-.result{
-
-font-size:42px;
-
-font-weight:bold;
-
-color:red;
-
-margin-top:15px;
-
-}
-
-.winner{
-
-font-size:40px;
-
-font-weight:bold;
-
-color:gold;
-
-animation:blink 1s infinite;
-
-}
-
-@keyframes blink{
-
-50%{
-
-opacity:0;
-
-}
-
-}
-
-table{
-
-width:100%;
-
-border-collapse:collapse;
-
-margin-top:20px;
-
-}
-
-table th{
-
-background:#b91c1c;
-
-color:white;
-
-padding:12px;
-
-}
-
-table td{
-
-padding:12px;
-
-background:white;
-
-color:black;
-
-border:1px solid #ddd;
-
-}
-
-footer{
-
-padding:25px;
-
-text-align:center;
-
-opacity:.8;
-
-}
-
-@media(max-width:768px){
-
-#bannerTitle{
-
-font-size:24px;
-
-}
-
-.result{
-
-font-size:30px;
-
-}
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <!-- SEO -->
+    <meta name="description"
+          content="Live Game Result Website">
+    <meta name="keywords"
+          content="Live Result, Game Result, Platinum">
+    <meta name="author"
+          content="Admin">
+    <!-- Dynamic Title -->
+    <title id="pageTitle">
+        Loading...
+    </title>
+    <!-- Favicon -->
+    <link id="favicon"
+          rel="icon"
+          href="assets/icons/favicon.png">
+    <!-- CSS -->
+    <link rel="stylesheet"
+          href="css/style.css">
 </head>
-
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-container">
+                <select id="oldResult">
+                    <option value="">
+                        Old Result
+                    </option>
+                </select>
+                <h2 id="mainHeading">
+                    Loading...
+                </h2>
+                <p id="todayDate">
+                    Loading Date...
+                </p>
+            </div>
+        </section>
+        <!-- Notice -->
+        <section class="notice-section">
+            <div class="notice-box">
+                <p id="noticeText">
+                    Loading Notice...
+                </p>
+            </div>
+        </section>
+        <!-- Live Result -->
+        <section class="live-result">
+            <h3 id="liveTitle">
+                Today's Live Game Results
+            </h3>
+            <div id="liveResultContainer">
+                <!-- Dynamic Result -->
+            </div>
+        </section>
+        <!-- All Result -->
+        <section class="all-result">
+            <h3 id="allResultTitle">
+                Game Results
+            </h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Morning</th>
+                            <th>Day</th>
+                            <th>Night</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTable">
+                        <!-- Dynamic Data -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
 <body>
-
-<header>
-
-<h1 id="bannerTitle">
-
-Loading...
-
-</h1>
-
-<p id="bannerSubtitle">
-
-Loading...
-
-</p>
-
-</header>
-
-<div class="notice">
-
-<span id="announcement">
-
-Loading Announcement...
-
-</span>
-
-</div>
-
-<div class="menu">
-
-<button onclick="showTab('result')">
-
-🏆 Result
-
-</button>
-
-<button onclick="showTab('cricket')">
-
-🏏 Cricket
-
-</button>
-
-<button onclick="showTab('football')">
-
-⚽ Football
-
-</button>
-
-<button onclick="showTab('weather')">
-
-🌦 Weather
-
-</button>
-
-<button onclick="showTab('history')">
-
-📜 History
-
-</button>
-
-</div>
-<!-- RESULT SECTION -->
-<div id="result" class="section active">
-
-<div class="grid">
-
-<div class="card">
-<h2>MMC</h2>
-<div id="mmc" class="result">Loading...</div>
-</div>
-
-<div class="card">
-<h2>FFL</h2>
-<div id="ffl" class="result">Loading...</div>
-</div>
-
-<div class="card">
-<h2>Mumbai Gold</h2>
-<div id="mumbai" class="result">Loading...</div>
-</div>
-
-</div>
-
-<br>
-
-<div class="card">
-<h2>🏆 Today's Winner</h2>
-<div id="winner" class="winner">Waiting...</div>
-</div>
-
-</div>
-
-<!-- CRICKET -->
-
-<div id="cricket" class="section">
-
-<div class="card">
-
-<h2>🏏 Live Cricket Score</h2>
-
-<div id="cricketScore" class="result">
-
-Loading...
-
-</div>
-
-</div>
-
-</div>
-
-<!-- FOOTBALL -->
-
-<div id="football" class="section">
-
-<div class="card">
-
-<h2>⚽ Live Football Score</h2>
-
-<div id="footballScore" class="result">
-
-Loading...
-
-</div>
-
-</div>
-
-</div>
-
-<!-- WEATHER -->
-
-<div id="weather" class="section">
-
-<div class="card">
-
-<h2>🌦 Live Weather</h2>
-
-<div id="weatherData" class="result">
-
-Loading...
-
-</div>
-
-</div>
-
-</div>
-
-<!-- HISTORY -->
-
-<div id="history" class="section">
-
-<div class="card">
-
-<h2>
-
-📜 Result History
-
-</h2>
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Game</th>
-
-<th>Result</th>
-
-</tr>
-
-</thead>
-
-<tbody id="historyTable">
-
-<tr>
-
-<td colspan="2">
-
-Loading...
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<footer>
-
-<h3>
-
-© Ultimate Live Dashboard
-
-</h3>
-
-<p>
-
-Realtime Firebase System
-
-</p>
-
-</footer>
-
-<audio id="alertSound">
-
-<source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" type="audio/mpeg">
-
-</audio>
-
-<script type="module">
-  import {
-db,
-ref,
-onValue
-} from "./js/firebase.js";
-let manualWeather = false;
-
-window.showTab = function(tabName){
-document.querySelectorAll(".section").forEach(section=>{
-section.classList.remove("active");
-});
-document.getElementById(tabName).classList.add("active");
-};
-
-onValue(ref(db,"banner"),(snapshot)=>{
-const data=snapshot.val();
-if(data){
-document.getElementById("bannerTitle").innerText=data.title || "Ultimate Live Dashboard";
-document.getElementById("bannerSubtitle").innerText=data.subtitle || "";
-}
-});
-
-onValue(ref(db,"announcement"),(snapshot)=>{
-const data=snapshot.val();
-if(data){
-document.getElementById("announcement").innerText=data.text || "";
-}
-});
-
-onValue(ref(db,"results"),(snapshot)=>{
-const data=snapshot.val();
-if(data){
-document.getElementById("mmc").innerText=data.mmc || "--";
-document.getElementById("ffl").innerText=data.ffl || "--";
-document.getElementById("mumbai").innerText=data.mumbai || "--";
-}
-});
-
-onValue(ref(db,"winner"),(snapshot)=>{
-const data=snapshot.val();
-if(data){
-document.getElementById("winner").innerText=data.name || "Waiting...";
-document.getElementById("alertSound").play().catch(()=>{});
-}
-});
-
-onValue(ref(db,"manual"),(snapshot)=>{
-const data=snapshot.val();
-
-if(data){
-
-document.getElementById("cricketScore").innerText =
-data.cricket || "Auto Loading...";
-
-document.getElementById("footballScore").innerText =
-data.football || "Auto Loading...";
-
-if(data.weather){
-manualWeather=true;
-document.getElementById("weatherData").innerText=data.weather;
-}else{
-manualWeather=false;
-}
-
-}
-});
-
-onValue(ref(db,"history"),(snapshot)=>{
-
-const data=snapshot.val();
-
-let html="";
-
-if(data){
-
-Object.keys(data).reverse().forEach((key)=>{
-
-html+=`
-<tr>
-<td>${data[key].game}</td>
-<td>${data[key].result}</td>
-</tr>
-`;
-
-});
-
-}else{
-
-html=`
-<tr>
-<td colspan="2">
-No History
-</td>
-</tr>
-`;
-
-}
-
-document.getElementById("historyTable").innerHTML=html;
-
-});
-
-async function fetchWeather(){
-
-if(manualWeather) return;
-
-try{
-
-const res=await fetch("https://wttr.in/?format=3");
-
-const txt=await res.text();
-
-document.getElementById("weatherData").innerText=txt;
-
-}catch{
-
-document.getElementById("weatherData").innerText="Weather Error";
-
-}
-
-}
-
-fetchWeather();
-
-setInterval(fetchWeather,30000);
-
-// Auto Placeholder (Replace with Sports API later)
-
-setInterval(()=>{
-
-if(document.getElementById("cricketScore").innerText==="Auto Loading..."){
-
-document.getElementById("cricketScore").innerText="Waiting for Live Match";
-
-}
-
-if(document.getElementById("footballScore").innerText==="Auto Loading..."){
-
-document.getElementById("footballScore").innerText="Waiting for Live Match";
-
-}
-
-},5000);
-
-</script>
-
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="loader-box">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+    <!-- Website -->
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-area">
+                <img
+                    id="siteLogo"
+                    src="assets/images/logo.png"
+                    alt="Logo">
+                <h1 id="siteName">
+                    Loading...
+                </h1>
+                <p id="welcomeText">
+                    Welcome
+                </p>
+            </div>
+        </header>
+                <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p id="footerText">
+                    Loading...
+                </p>
+            </div>
+        </footer>
+    </div>
+    <!-- End App -->
+    <!-- Toast Notification -->
+    <div id="toastContainer"></div>
+    <!-- Global Modal -->
+    <div id="globalModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    <!-- Scroll To Top -->
+    <button id="scrollTopBtn"
+            title="Go to Top">
+        ↑
+    </button>
+
+    <!-- JavaScript -->
+    <script src="js/firebase.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/sports.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
