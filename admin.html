@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bombay Gold - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <h1>BOMBAY GOLD - ADMIN PANEL</h1>
+            <p class="admin-subtitle">Control your live game results</p>
+        </div>
 
+        <!-- Global Settings Section -->
+        <div class="admin-section">
+            <h2>Global Settings</h2>
+            
+            <div class="form-group">
+                <label for="marqueeInput">Marquee Text:</label>
+                <input type="text" id="marqueeInput" placeholder="Enter marquee announcement">
+            </div>
+
+            <div class="form-group">
+                <label for="announcementInput">Announcement Text:</label>
+                <textarea id="announcementInput" placeholder="Enter announcement"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="tipsLinkInput">Tips Button Link:</label>
+                <input type="text" id="tipsLinkInput" placeholder="Enter tips link or content">
+            </div>
+
+            <div class="form-group">
+                <label for="pattiChartLinkInput">Patti Chart Button Link:</label>
+                <input type="text" id="pattiChartLinkInput" placeholder="Enter patti chart link or content">
+            </div>
+        </div>
+
+        <!-- Date Selection -->
+        <div class="admin-section">
+            <h2>Select Date</h2>
+            <div class="date-control">
+                <input type="date" id="dateInput">
+                <button class="btn-secondary" id="editDateBtn">Edit</button>
+                <button class="btn-secondary" id="addNewDateBtn">Add New Date Row</button>
+            </div>
+        </div>
+
+        <!-- Time Slots and Results Input -->
+        <div class="admin-section">
+            <h2>Game Results - <span id="selectedDate">Today</span></h2>
+            <div id="timeSlotContainer">
+                <!-- Time slot inputs will be dynamically generated -->
+            </div>
+        </div>
+
+        <!-- Publish Button -->
+        <div class="admin-footer">
+            <button class="btn-publish" id="publishBtn">PUBLISH LIVE</button>
+            <button class="btn-secondary" id="logoutBtn">Logout</button>
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="status-message"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
