@@ -1,21 +1,22 @@
-// ১. আপনার ফায়ারবেস কনফিগারেশন কোড নিচে বসান (Replace করুন)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+// আপনার পাঠানো আসল ফায়ারবেস কনফিগারেশন
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
+    authDomain: "live-result-b9155.firebaseapp.com",
+    databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "live-result-b9155",
+    storageBucket: "live-result-b9155.firebasestorage.app",
+    messagingSenderId: "495121483481",
+    appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
+    measurementId: "G-DFDW40QF87"
 };
 
-// ফায়ারবেস ইনিশিয়ালাইজ করুন
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const database = firebase.database();
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
-// নির্ধারিত টাইম স্লটসমূহ (ইমেজের সাথে হুবহু মিল রেখে)
+// আপনার প্রথম ইমেজের টাইম স্লটগুলো হুবহু
 const timeSlots = ["10:20 AM", "11:50 AM", "01:20 PM", "02:50 PM", "04:20 PM", "05:50 PM", "07:20 PM"];
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -23,17 +24,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const adminInputsBody = document.getElementById("admin-inputs-body");
     const btnPublish = document.getElementById("btn-publish");
 
-    // --- ব্যবহারকারী পেজ লজিক (index.html) ---
+    // --- ভিজিটর সাইট ভিউ (index.html) ---
     if (resultsContainer) {
-        // ফায়ারবেস থেকে রিয়েল-টাইম ডাটা শোনা (কোনো রিফ্রেশ লাগবে না)
-        database.ref("game_results").on("value", (snapshot) => {
+        onValue(ref(database, "game_results"), (snapshot) => {
             const data = snapshot.val();
             if (!data) {
                 resultsContainer.innerHTML = '<div class="loading-text">কোনো লাইভ রেজাল্ট পাওয়া যায়নি।</div>';
                 return;
             }
 
-            // হেডার টেক্সট ও লিংক আপডেট
             if(data.settings) {
                 if(data.settings.subtitle) document.getElementById("site-subtitle").textContent = data.settings.subtitle;
                 if(data.settings.marquee) document.getElementById("site-marquee").textContent = data.settings.marquee;
@@ -41,15 +40,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 if(data.settings.pattiUrl) document.getElementById("link-patti").href = data.settings.pattiUrl;
             }
 
-            // টেবিল তৈরি করা
             resultsContainer.innerHTML = "";
             const records = data.records || {};
-            // তারিখ অনুযায়ী সাজানো (নতুন তারিখ উপরে থাকবে)
             const sortedDates = Object.keys(records).sort((a, b) => new Date(b) - new Date(a));
 
             sortedDates.forEach(dateKey => {
                 const dayData = records[dateKey];
-                // তারিখ ফরম্যাট পরিবর্তন (YYYY-MM-DD থেকে DD/MM/YYYY)
                 const dateParts = dateKey.split("-");
                 const displayDate = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : dateKey;
 
@@ -58,21 +54,22 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="date-header">${displayDate}</div>
                         <div style="overflow-x: auto;">
                             <table class="results-grid-table">
-                                header_row
-                                body_row
+                                <thead>
+                                    <tr>${timeSlots.map(t => `<th>${t}</th>`).join("")}</tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        ${timeSlots.map(t => {
+                                            let patti = (dayData[t] && dayData[t].patti) ? dayData[t].patti : "-";
+                                            let single = (dayData[t] && dayData[t].single) ? dayData[t].single : "-";
+                                            return `<td><span class="patti-row-text">${patti}</span><span class="single-row-text">${single}</span></td>`;
+                                        }).join("")}
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
                 `;
-
-                let headerRow = "<thead><tr>" + timeSlots.map(t => `<th>${t}</th>`).join("") + "</tr></thead>";
-                let bodyRow = "<tbody><tr>" + timeSlots.map(t => {
-                    let patti = (dayData[t] && dayData[t].patti) ? dayData[t].patti : "-";
-                    let single = (dayData[t] && dayData[t].single) ? dayData[t].single : "-";
-                    return `<td><span class="patti-row-text">${patti}</span><span class="single-row-text">${single}</span></td>`;
-                }).join("") + "</tr></tbody>";
-
-                tableHtml = tableHtml.replace("header_row", headerRow).replace("body_row", bodyRow);
                 resultsContainer.innerHTML += tableHtml;
             });
         });
@@ -80,7 +77,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- অ্যাডমিন প্যানেল লজিক (admin.html) ---
     if (adminInputsBody && btnPublish) {
-        // ইনপুট রো বা সারিগুলো তৈরি করা
         timeSlots.forEach(time => {
             const tr = document.createElement("tr");
             tr.setAttribute("data-time", time);
@@ -93,13 +89,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         const dateInput = document.getElementById("result-date");
-        // আজকে দিনটি ডিফল্ট সেট করা
         dateInput.value = new Date().toISOString().split('T')[0];
 
-        // তারিখ পরিবর্তন করলে ফায়ারবেস থেকে আগের ডাটা থাকলে ইনপুটে বসবে
-        dateInput.addEventListener("change", () => {
+        const loadExistingData = () => {
             const selectedDate = dateInput.value;
-            database.ref(`game_results/records/${selectedDate}`).once("value", (snapshot) => {
+            if(!selectedDate) return;
+            get(ref(database, `game_results/records/${selectedDate}`)).then((snapshot) => {
                 const dayData = snapshot.val() || {};
                 document.querySelectorAll("#admin-inputs-body tr").forEach(row => {
                     const time = row.getAttribute("data-time");
@@ -107,10 +102,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     row.querySelector(".input-single").value = (dayData[time] && dayData[time].single && dayData[time].single !== "-") ? dayData[time].single : "";
                 });
             });
-        });
-        dateInput.dispatchEvent(new Event("change"));
+        };
 
-        // পাবলিশ লাইভ বাটনে ক্লিক অ্যাকশন
+        dateInput.addEventListener("change", loadExistingData);
+        loadExistingData();
+
         btnPublish.addEventListener("click", () => {
             const selectedDate = dateInput.value;
             if(!selectedDate) return alert("তারিখ সিলেক্ট করুন!");
@@ -130,14 +126,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 pattiUrl: document.getElementById("input-patti-url").value.trim() || "#"
             };
 
-            // ফায়ারবেস ডাটাবেসে সেভ করা
-            database.ref(`game_results/records/${selectedDate}`).set(recordsUpdate);
-            database.ref(`game_results/settings`).set(settings).then(() => {
+            set(ref(database, `game_results/records/${selectedDate}`), recordsUpdate);
+            set(ref(database, `game_results/settings`), settings).then(() => {
                 const statusMsg = document.getElementById("status-message");
-                statusMsg.textContent = "সফলভাবে ইন্টারনেটে লাইভ করা হয়েছে!";
+                statusMsg.textContent = "সফলভাবে লাইভ করা হয়েছে!";
                 statusMsg.className = "status-msg status-success";
-                setTimeout(() => statusMsg.style.display = "none", 4000);
-            });
+                setTimeout(() => statusMsg.style.display = "none", 3000);
+            }).catch(err => alert("Error: " + err.message));
         });
     }
 });
