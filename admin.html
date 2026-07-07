@@ -7,16 +7,23 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="admin-body">
-    <div class="container">
+
+    <div id="admin-auth-screen">
+        নেভিগেশন লক! অ্যাডমিন পাসওয়ার্ড দিন:
+        <input type="password" id="admin-password" placeholder="পাসওয়ার্ড লিখুন (যেমন: 1234)" style="width:100%; padding:10px; margin:15px 0; border:1px solid #ccc; text-align:center;">
+        <button id="btn-login" class="btn-publish">লগইন করুন</button>
+    </div>
+
+    <div id="admin-main-content" class="container">
         <header class="main-header">
             <h1 class="logo-text">BOMBAY GOLD - CONTROL PANEL</h1>
-            <p class="bengali-notice">লাইভ গেম রেজাল্ট, টাইম স্লট এবং প্রিভিয়াস বক্স এডিটর</p>
+            <p class="bengali-notice">এডভান্সড সেটিংস এবং লাইভ রেজাল্ট ম্যানেজমেন্ট</p>
         </header>
 
         <div class="admin-box">
-            <h2>Live Results & Time Customization (এখানে টাইম ও রেজাল্ট দুটোই টাইপ করা যাবে)</h2>
+            <h2>Live Results & Time Customization</h2>
             <div class="form-group">
-                <label>তারিখ সিলেক্ট করুন (পুরনো দিনের এডিটের জন্য ক্যালেন্ডার ব্যবহার করুন):</label>
+                <label>তারিখ সিলেক্ট করুন (Date):</label>
                 <input type="date" id="result-date" required>
             </div>
 
@@ -24,7 +31,7 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th style="width: 40%;">Time Slot (টাইম স্লট লিখুন)</th>
+                            <th style="width: 40%;">Time Slot</th>
                             <th style="width: 30%;">৩ সংখ্যার পাত্তি (Patti)</th>
                             <th style="width: 30%;">১ সংখ্যার সিঙ্গেল (Single)</th>
                         </tr>
@@ -36,22 +43,30 @@
         </div>
 
         <div class="admin-box">
-            <h2>Website Header & Button Link Customization</h2>
+            <h2>Website Smart Settings & Customization</h2>
+            <div class="form-group">
+                <label>জরুরি লাল নোটিফিকেশন বার (ফাঁকা রাখলে মেইন পেজে হাইড থাকবে):</label>
+                <input type="text" id="input-alert" placeholder="যেমন: আজকে উৎসবের জন্য বিকেল ৫ টার খেলা বন্ধ থাকবে।">
+            </div>
+            <div class="form-group">
+                <label>ব্যাকগ্রাউন্ড ইমেজের অনলাইন লিঙ্ক (URL) (ফাঁকা রাখলে ডিফল্ট কালার থাকবে):</label>
+                <input type="url" id="input-bg-url" placeholder="যেমন: https://site.com/bg-image.jpg">
+            </div>
             <div class="form-group">
                 <label>বাংলা সাবটাইটেল টেক্সট:</label>
-                <input type="text" id="input-subtitle" value="লাইভ গেম রেসাল্ট সবথেকে প্রথম পাওয়ার জন্য ভিজিট করুন এই সাইট এ |">
+                <input type="text" id="input-subtitle">
             </div>
             <div class="form-group">
                 <label>চলন্ত লেখা (Marquee Text):</label>
-                <input type="text" id="input-marquee" value="আজকের অফার আপডেট এর জন্য অপেক্ষা করুন...">
+                <input type="text" id="input-marquee">
             </div>
             <div class="form-group">
-                <label>Tips Button URL Link:</label>
-                <input type="url" id="input-tips-url" placeholder="https://example.com/tips">
+                <label>Tips Button URL:</label>
+                <input type="url" id="input-tips-url">
             </div>
             <div class="form-group">
-                <label>Patti Chart Button URL Link:</label>
-                <input type="url" id="input-patti-url" placeholder="https://example.com/patti">
+                <label>Patti Chart Button URL:</label>
+                <input type="url" id="input-patti-url">
             </div>
         </div>
 
