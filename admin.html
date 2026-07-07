@@ -8,24 +8,34 @@
 </head>
 <body class="admin-body">
 
+    <!-- সিকিউরিটি লগইন স্ক্রিন -->
     <div id="admin-auth-screen" class="auth-wrapper">
-        <h2 style="margin-bottom: 15px; font-size: 20px; color: #333;">Security Navigation Lock</h2>
-        <p style="margin-bottom: 15px; font-size: 14px; color: #666;">কন্ট্রোল প্যানেলে প্রবেশ করতে সঠিক পাসওয়ার্ড দিন:</p>
+        <h2>Security Navigation Lock</h2>
+        <p>কন্ট্রোল প্যানেলে প্রবেশ করতে সঠিক পাসওয়ার্ড দিন:</p>
         <div class="form-group">
             <input type="password" id="admin-password" placeholder="পাসওয়ার্ড লিখুন" style="text-align: center;">
         </div>
         <button id="btn-login" class="btn-publish">লগইন করুন</button>
     </div>
 
+    <!-- মূল অ্যাডমিন ড্যাশবোর্ড (লগইন ছাড়া এটি দেখা যাবে না) -->
     <div id="admin-main-content" class="container" style="display: none;">
-        <header class="main-header">
-            <h1 class="logo-text">BOMBAY GOLD - CONTROL PANEL</h1>
-            <p id="admin-role-badge" style="display: inline-block; background: #ffd700; color: #111; padding: 3px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-top: 5px;">ROLE: ADMIN</p>
+        <header class="admin-header-bar">
+            <div>
+                <h1 class="admin-logo">BOMBAY GOLD</h1>
+                <span id="admin-role-badge" class="role-badge">ROLE: ADMIN</span>
+            </div>
+            <!-- লগআউট বাটন -->
+            <button id="btn-logout" class="btn-logout">Logout</button>
         </header>
 
+        <!-- সাকসেস মেসেজ অ্যালার্ট পপ-আপ -->
+        <div id="status-message" class="status-msg"></div>
+
+        <!-- বক্স ১: রেজাল্ট ইনপুট (স্টাফ ও মাস্টার উভয়ের জন্য কম্প্যাক্ট ও স্লিক ডিজাইন) -->
         <div class="admin-box">
-            <h2>Live Results & Time Customization</h2>
-            <div class="form-group">
+            <div class="box-header">Live Results & Time Customization</div>
+            <div class="form-group" style="max-width: 250px; margin: 10px 0;">
                 <label>তারিখ সিলেক্ট করুন (Date):</label>
                 <input type="date" id="result-date" required>
             </div>
@@ -34,47 +44,52 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th style="width: 40%;">Time Slot (টাইম পরিবর্তনযোগ্য)</th>
-                            <th style="width: 30%;">৩ সংখ্যার পাত্তি (Patti)</th>
-                            <th style="width: 30%;">১ সংখ্যার সিঙ্গেল (Single)</th>
+                            <th>Time Slot</th>
+                            <th>৩ সংখ্যার পাত্তি (Patti)</th>
+                            <th>১ সংখ্যার সিঙ্গেল (Single)</th>
                         </tr>
                     </thead>
                     <tbody id="admin-inputs-body">
-                        </tbody>
+                        <!-- জাভাস্ক্রিপ্ট দিয়ে রো তৈরি হবে -->
+                    </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- বক্স ২: মাস্টার স্মার্ট সেটিংস (স্টাফ লগইন করলে এই সুন্দর বক্সটি পুরোপুরি হাইড থাকবে) -->
         <div id="master-settings-box" class="admin-box" style="display: none;">
-            <h2 style="border-bottom: 2px solid #ffd700;">★ Website Smart Settings & Customization (Master Only)</h2>
-            <div class="form-group">
-                <label>জরুরি লাল নোটিফিকেশন বার (ফাঁকা রাখলে মেইন পেজে হাইড থাকবে):</label>
-                <input type="text" id="input-alert" placeholder="যেমন: আজকে উৎসবের জন্য বিকেল ৫ টার খেলা বন্ধ থাকবে।">
-            </div>
-            <div class="form-group">
-                <label>ব্যাকগ্রাউন্ড ইমেজের অনলাইন লিঙ্ক (Image URL):</label>
-                <input type="url" id="input-bg-url" placeholder="যেমন: https://images.unsplash.com/photo-1518770660439-4636190af475">
-            </div>
-            <div class="form-group">
-                <label>বাংলা সাবটাইটেল টেক্সট:</label>
-                <input type="text" id="input-subtitle">
-            </div>
-            <div class="form-group">
-                <label>চলন্ত লেখা (Marquee Text):</label>
-                <input type="text" id="input-marquee">
-            </div>
-            <div class="form-group">
-                <label>Tips Button URL:</label>
-                <input type="url" id="input-tips-url">
-            </div>
-            <div class="form-group">
-                <label>Patti Chart Button URL:</label>
-                <input type="url" id="input-patti-url">
+            <div class="box-header master-color">★ Website Smart Settings (Master Only)</div>
+            
+            <div class="admin-grid-inputs">
+                <div class="form-group">
+                    <label>জরুরি লাল নোটিফিকেশন বার:</label>
+                    <input type="text" id="input-alert" placeholder="ফাঁকা রাখলে হাইড থাকবে">
+                </div>
+                <div class="form-group">
+                    <label>ব্যাকগ্রাউন্ড ইমেজ লিঙ্ক (URL):</label>
+                    <input type="url" id="input-bg-url" placeholder="https://example.com/bg.jpg">
+                </div>
+                <div class="form-group">
+                    <label>বাংলা সাবটাইটেল টেক্সট:</label>
+                    <input type="text" id="input-subtitle">
+                </div>
+                <div class="form-group">
+                    <label>চলন্ত লেখা (Marquee Text):</label>
+                    <input type="text" id="input-marquee">
+                </div>
+                <div class="form-group">
+                    <label>Tips Button URL:</label>
+                    <input type="url" id="input-tips-url">
+                </div>
+                <div class="form-group">
+                    <label>Patti Chart Button URL:</label>
+                    <input type="url" id="input-patti-url">
+                </div>
             </div>
         </div>
 
-        <button type="button" id="btn-publish" class="btn-publish">PUBLISH LIVE</button>
-        <div id="status-message" class="status-msg"></div>
+        <!-- অ্যাকশন বাটন -->
+        <button type="button" id="btn-publish" class="btn-publish" style="margin-top: 10px;">PUBLISH LIVE</button>
     </div>
 
     <script type="module" src="app.js"></script>
