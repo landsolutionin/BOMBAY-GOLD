@@ -1,106 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BOMBAY GOLD - Live Results</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOMBAY GOLD - Live Game Results</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="wrap">
-    <header class="site-header">
-      <div style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:8px; flex-wrap:wrap;">
-        <div id="userLogo" class="user-logo">BG</div>
-        <div>
-          <h1 class="brand-title" id="userTitle">BOMBAY GOLD</h1>
-          <div class="brand-sub" id="userSubtitle">লাইভ গেম রেজাল্ট</div>
+    <div class="container">
+        <header class="main-header">
+            <h1 class="logo-text">BOMBAY GOLD</h1>
+            <p id="site-subtitle" class="bengali-notice">লাইভ গেম রেজাল্ট সবথেকে প্রথম পাওয়ার জন্য ভিজিট করুন এই সাইট এ।</p>
+            <div class="marquee-container">
+                <marquee id="site-marquee" scrollamount="5">আজকের অফার আপডেট এর জন্য অপেক্ষা করুন...</marquee>
+            </div>
+        </header>
+
+        <div class="nav-buttons">
+            <a href="#" id="link-tips" class="btn btn-tips" target="_blank">Tips</a>
+            <a href="#" id="link-patti" class="btn btn-patti" target="_blank">Patti Chart</a>
         </div>
-      </div>
-    </header>
 
-    <div class="live-marquee" id="userMarqueeBox">
-      <span class="track" id="userMarqueeTrack">লোড হচ্ছে...</span>
+        <div class="section-title">
+            <h2>Today's Live Game Results</h2>
+            <h3>Game Results in All West Bengal</h3>
+        </div>
+
+        <div id="results-container">
+            <div class="loading-text">ফলাফল লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</div>
+        </div>
     </div>
 
-    <div id="menuButtonsRow" style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; justify-content:center;"></div>
-
-    <div class="user-table-wrap card" style="padding:14px;">
-      <table id="userTable">
-        <thead>
-          <tr id="userHeaderRow"></tr>
-        </thead>
-        <tbody id="userTableBody">
-          <tr><td colspan="7" style="text-align:center; padding:20px;">ফলাফল লোড হচ্ছে...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
-      authDomain: "live-result-b9155.firebaseapp.com",
-      projectId: "live-result-b9155",
-      storageBucket: "live-result-b9155.firebasestorage.app",
-      messagingSenderId: "495121483481",
-      appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
-      measurementId: "G-DFDW40QF87",
-      databaseURL: "https://live-result-b9155-default-rtdb.firebaseio.com" // আপনার প্রজেক্ট আইডি অনুসারে সেট করা
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const TIME_SLOTS = ["10:20 AM","11:50 AM","01:10 PM","02:40 PM","04:05 PM","05:35 PM"];
-
-    // টেবিল হেডার তৈরি
-    const headerRow = document.getElementById("userHeaderRow");
-    headerRow.innerHTML = "<th>DATE</th>";
-    TIME_SLOTS.forEach(slot => { headerRow.innerHTML += `<th>${slot}</th>`; });
-
-    // ফায়ারবেস রিয়েল-টাইম লিসেনার
-    onValue(ref(db, "liveData"), (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            if(data.settings) {
-                document.getElementById("userSubtitle").textContent = data.settings.subtitle || "লাইভ গেম রেজাল্ট";
-                document.getElementById("userMarqueeTrack").textContent = data.settings.marquee || "আপডেট আসছে...";
-                
-                // মেনু বা লিঙ্ক বোতাম জেনারেট
-                const container = document.getElementById("menuButtonsRow");
-                container.innerHTML = "";
-                if(data.settings.tipsUrl) container.innerHTML += `<a href="${data.settings.tipsUrl}" target="_blank" class="btn primary" style="text-decoration:none;">Tips</a>`;
-                if(data.settings.pattiUrl) container.innerHTML += `<a href="${data.settings.pattiUrl}" target="_blank" class="btn blue" style="text-decoration:none;">Patti Chart</a>`;
-            }
-            if(data.rows) {
-                const body = document.getElementById("userTableBody");
-                body.innerHTML = "";
-                data.rows.forEach(row => {
-                    let tr = `<tr><td><strong>${row.date}</strong></td>`;
-                    TIME_SLOTS.forEach(slot => {
-                        const slotData = row.slots ? row.slots[slot] : null;
-                        const a = slotData ? (slotData.a || "—") : "—";
-                        const b = slotData ? (slotData.b || "—") : "—";
-                        const d1 = slotData ? (slotData.d1 || "—") : "—";
-                        const d2 = slotData ? (slotData.d2 || "—") : "—";
-                        tr += `<td>
-                            <div style="font-weight:bold; color:#1f5aa8;">${a} | ${b}</div>
-                            <div style="font-size:12px; color:#8b6b15;">(${d1}, ${d2})</div>
-                        </td>`;
-                    });
-                    tr += "</tr>";
-                    body.innerHTML += tr;
-                });
-            }
-        }
-    });
-  </script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
