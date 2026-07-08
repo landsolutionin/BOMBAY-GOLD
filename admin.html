@@ -10,14 +10,14 @@
 
     <div id="admin-auth-screen" class="auth-wrapper">
         <h2>Security Navigation Lock</h2>
-        <p>control প্যানেলে প্রবেশ করতে সঠিক পাসওয়ার্ড দিন:</p>
+        <p>কন্ট্রোল প্যানেলে প্রবেশ করতে সঠিক পাসওয়ার্ড দিন:</p>
         <div class="form-group">
             <input type="password" id="admin-password" placeholder="পাসওয়ার্ড লিখুন" style="text-align: center;">
         </div>
         <button id="btn-login" class="btn-publish">লগইন করুন</button>
     </div>
 
-    <div id="admin-main-content" class="container" style="display: none;">
+    <div id="admin-main-content" class="container" style="display: none; background: #ffffff;">
         <header class="admin-header-bar">
             <div>
                 <h1 class="admin-logo">BOMBAY GOLD</h1>
@@ -29,7 +29,7 @@
         <div id="status-message" class="status-msg"></div>
 
         <div class="admin-box">
-            <div class="box-header">Live Results & Time Customization</div>
+            <div class="box-header">Live Results & Time Customization (রো-ভিত্তিক আলাদা সাবমিট)</div>
             <div class="form-group" style="max-width: 250px; margin: 10px 0;">
                 <label>তারিখ সিলেক্ট করুন (Date):</label>
                 <input type="date" id="result-date" required>
@@ -39,9 +39,10 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Time Slot</th>
-                            <th>৩ সংখ্যার পাত্তি (Patti)</th>
-                            <th>১ সংখ্যার সিঙ্গেল (Single)</th>
+                            <th style="width: 30%;">Time Slot (এডিটেবল)</th>
+                            <th style="width: 30%;">৩ সংখ্যার পাত্তি (Patti)</th>
+                            <th style="width: 25%;">১ সংখ্যার সিঙ্গেল (Single)</th>
+                            <th style="width: 15%;">অ্যাকশন</th>
                         </tr>
                     </thead>
                     <tbody id="admin-inputs-body">
@@ -50,24 +51,24 @@
             </div>
         </div>
 
-        <div id="master-settings-box" class="admin-box" style="display: none;">
+        <div id="master-settings-box" class="admin-box" style="display: none; border-top: 3px solid #ffb300;">
             <div class="box-header master-color">★ Website Smart Settings & Passwords (Master Only)</div>
             
             <div class="admin-grid-inputs">
                 <div class="form-group">
                     <label><b>Website Status (অন/অফ কন্ট্রোল):</b></label>
-                    <select id="input-live-status" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fffbeb; font-weight: bold;">
+                    <select id="input-live-status" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fffbeb; font-weight: bold; cursor: pointer;">
                         <option value="live">🟢 LIVE NOW (সব চার্ট ও রেজাল্ট চালু থাকবে)</option>
                         <option value="off">🔴 TODAY OFF (চার্ট গায়েব হবে, স্ক্রিন ব্ল্যাঙ্ক থাকবে)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>জরুরি লাল নোটিফিকেশন বার:</label>
-                    <input type="text" id="input-alert" placeholder="ফাঁকা রাখলে হাইড থাকবে">
+                    <label>জরুরি নোটিফিকেশন বার টেক্সট:</label>
+                    <input type="text" id="input-alert" placeholder="ফাঁকা রাখলে মেইন পেজে হাইড থাকবে">
                 </div>
                 <div class="form-group">
                     <label>ব্যাকগ্রাউন্ড ইমেজ লিঙ্ক (URL):</label>
-                    <input type="url" id="input-bg-url" placeholder="https://example.com/bg.jpg">
+                    <input type="url" id="input-bg-url" placeholder="https://example.com/hd-wallpaper.jpg">
                 </div>
                 <div class="form-group">
                     <label>বাংলা সাবটাইটেল টেক্সট:</label>
@@ -88,21 +89,21 @@
             </div>
 
             <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #e2e8f0;">
-                <h4 style="margin: 0 0 10px 0; color: #1f78c1;">🔒 Live Security Password Manager</h4>
+                <h4 style="margin: 0 0 10px 0; color: #1f78c1; font-size: 14px;">🔒 Live Security Password Manager</h4>
                 <div class="admin-grid-inputs">
                     <div class="form-group">
-                        <label>Master Admin Password:</label>
-                        <input type="text" id="input-master-pass" placeholder="Default: 777#7">
+                        <label>Master Admin Password (নতুন পাসওয়ার্ড দিন):</label>
+                        <input type="text" id="input-master-pass" placeholder="মাস্টার পিন কোড">
                     </div>
                     <div class="form-group">
-                        <label>Staff Password (Results Only):</label>
-                        <input type="text" id="input-staff-pass" placeholder="Default: 12@34">
+                        <label>Staff Password (রেজাল্ট এন্ট্রি পিন কোড):</label>
+                        <input type="text" id="input-staff-pass" placeholder="স্টাফ পিন কোড">
                     </div>
                 </div>
             </div>
-        </div>
 
-        <button type="button" id="btn-publish" class="btn-publish" style="margin-top: 10px;">PUBLISH LIVE</button>
+            <button type="button" id="btn-save-settings" class="btn-publish" style="margin-top: 15px; background-color: #2e7d32;">SAVE WEBSITE SETTINGS & PASSWORDS</button>
+        </div>
     </div>
 
     <script type="module" src="app.js"></script>
