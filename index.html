@@ -6,14 +6,16 @@
     <title>BOMBAY GOLD - Live Game Results</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
     <div class="container">
         <!-- জরুরি লাল নোটিফিকেশন বার (ডাটা থাকলে শো করবে, না থাকলে অটো হাইড) -->
         <div id="custom-alert-bar" class="custom-alert-bar"></div>
 
+<body>
+    <div class="container">
+        <div id="custom-alert-bar" class="custom-alert-bar"></div>
+
         <header class="main-header">
-            <!-- LIVE ব্লিংকিং আইকন -->
-            <div class="live-badge">● LIVE</div>
+            <div id="live-indicator" class="live-badge">● LIVE</div>
             <h1 class="logo-text">BOMBAY GOLD</h1>
             <p id="site-subtitle" class="subtitle-text">লাইভ গেম রেজাল্ট সবথেকে প্রথম পাওয়ার জন্য ভিজিট করুন এই সাইট এ।</p>
             <div class="marquee-container">
@@ -26,14 +28,15 @@
             <a href="#" id="link-patti" class="btn btn-patti" target="_blank">Patti Chart</a>
         </div>
 
-        <div class="section-title">
-            <h2>Today's Live Game Results</h2>
-            <h3>Game Results in All West Bengal</h3>
-        </div>
+        <div id="main-results-wrap">
+            <div class="section-title">
+                <h2>Today's Live Game Results</h2>
+                <h3>Game Results in All West Bengal</h3>
+            </div>
 
-        <!-- রেজাল্ট কন্টেইনার (এখানে কখনো লুপ আটকে থাকবে না) -->
-        <div id="results-container">
-            <div class="loading-text">ফলাফল লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</div>
+            <div id="results-container">
+                <div class="loading-text">ফলাফল লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</div>
+            </div>
         </div>
     </div>
 
