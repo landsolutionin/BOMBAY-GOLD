@@ -387,10 +387,10 @@ body {
 }
 
 /* ====================================================
-   ★ লাইভ ও অফলাইন ব্যাজের ১০০% ডাইনামিক এনিমেশন ফিক্স ★
+   ★ লাইভ ও অফলাইন ব্যাজের ১০০% ফুল-প্রুফ ডাইনামিক ফিক্স ★
    ==================================================== */
 
-/* লাইভ ব্যাজের কমন বড় এবং স্পষ্ট ডিজাইন */
+/* লাইভ ব্যাজের কমন বড়, মোটা এবং স্পষ্ট বেস ডিজাইন */
 .live-badge {
     font-size: 16px !important;
     padding: 8px 16px !important;
@@ -404,9 +404,9 @@ body {
     transition: all 0.3s ease;
 }
 
-/* 🟢 যখন লাইভ থাকবে (ডিফল্ট সবুজ এবং তীব্র সবুজ গ্লো ব্লিঙ্ক) */
+/* 🟢 মোড ১: যখন লাইভ থাকবে (উজ্জ্বল সবুজ এবং তীব্র সবুজ গ্লো ব্লিঙ্ক) */
 #live-indicator {
-    background-color: #22c55e !important; /* উজ্জ্বল সবুজ */
+    background-color: #22c55e !important; /* খাঁটি সবুজ */
     color: #ffffff !important;
     animation: superGreenPulse 0.8s infinite alternate !important;
 }
@@ -422,14 +422,14 @@ body {
     }
 }
 
-/* 🔴 জাভাস্ক্রিপ্ট যখনই এটাকে OFF করবে (তখন এই স্পেশাল রুলটি সবুজ রঙকে কেটে লাল করে দেবে) */
-#live-indicator[style*="background: rgb(23ef, 68, 68)"],
-#live-indicator[style*="background: #ef4444"],
-#live-indicator[style*="background-color"],
-.live-badge[style*="background"] {
-    background-color: #ef4444 !important; /* জোর করে লাল রঙ অ্যাপ্লাই হবে */
+/* 🔴 মোড ২: যখনই "OFF" বা "TODAY OFF" হবে বা জাভাস্ক্রিপ্ট লাল কালার পুশ করবে */
+/* জাভাস্ক্রিপ্ট যখনই ইনলাইন কালার পুশ করবে, ব্রাউজার এই লাল মোডটাকেই ট্রিগার করবে */
+#live-indicator[style*="rgb(239, 68, 68)"],
+#live-indicator[style*="#ef4444"],
+#live-indicator[style*="red"] {
+    background-color: #ef4444 !important; /* জোর করে সবুজ কেটে লাল করবে */
     color: #ffffff !important;
-    animation: superRedPulse 0.8s infinite alternate !important; /* লাল ব্লিঙ্ক চালু হবে */
+    animation: superRedPulse 0.8s infinite alternate !important; /* লাল ধকধক চালু */
 }
 
 @keyframes superRedPulse {
@@ -439,7 +439,7 @@ body {
     }
     100% {
         transform: scale(1.12);
-        box-shadow: 0 0 20px #ef4444, 0 0 35px #ef4444;
+        box-shadow: 0 0 20px #ef4444, 0 0 35px #ef4444; /* তীব্র লাল নিয়ন গ্লো */
     }
 }
 
