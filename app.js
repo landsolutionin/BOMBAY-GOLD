@@ -34,46 +34,54 @@ document.addEventListener("DOMContentLoaded", function () {
     const dynamicSlotsList = document.getElementById("global-dynamic-slots-list");
     const btnAddSlotRow = document.getElementById("btn-add-new-slot-row");
     
-    // স্টাফ পাসওয়ার্ড চেঞ্জের নতুন এলিমেন্ট
+    // স্টাফ পাসওয়ার্ড চেঞ্জের এলিমেন্ট
     const staffPasswordContainer = document.getElementById("staff-password-change-container");
     const inputStaffSelfPass = document.getElementById("input-staff-self-pass");
     const btnSaveStaffSelfPass = document.getElementById("btn-save-staff-self-pass");
 
     let activeRole = "guest";
 
-    // --- ফাট ফাটাফাট ইনপুট রো তৈরি করার ইন্টারনাল ফাংশন ---
-const createSlotInputRowHTML = (value = "") => {
-    if (!dynamicSlotsList) return;
-    const div = document.createElement("div");
-    div.className = "slot-row-item";
-    div.innerHTML = `
-        <input type="text" class="dynamic-slot-time-value" value="${value}" placeholder="Time...">
-        <button type="button" class="btn-delete-slot">Delete</button>
+    // 🌟 ⚡ [RING: DYNAMIC INPUT ROW GENERATOR WITH HIDE SWITCH] ⚡ 🌟
+    const createSlotInputRowHTML = (value = "", isHidden = false) => {
+        if (!dynamicSlotsList) return;
+        const div = document.createElement("div");
+        div.className = "slot-row-item";
         
-        <div class="hide-show-wrapper" style="display: inline-flex; align-items: center; gap: 5px; margin-left: 10px;">
-            <input type="checkbox" class="slot-hide-checkbox" onchange="toggleSlotVisibility(this)">
-            <span style="font-size: 13px; font-weight: bold; color: #475569;">Hide</span>
-        </div>
-    `;
-    
-    div.querySelector(".btn-delete-slot").addEventListener("click", () => div.remove());
-    dynamicSlotsList.appendChild(div);
-};
+        // চেক করা থাকলে 'checked' অ্যাট্রিবিউট যোগ হবে
+        const checkedAttribute = isHidden ? "checked" : "";
+        
+        div.innerHTML = `
+            <input type="text" class="dynamic-slot-time-value" value="${value}" placeholder="Time...">
+            <button type="button" class="btn-delete-slot">Delete</button>
+            
+            <div class="hide-show-wrapper" style="display: inline-flex; align-items: center; gap: 5px; margin-left: 10px;">
+                <input type="checkbox" class="slot-hide-checkbox" ${checkedAttribute}>
+                <span style="font-size: 13px; font-weight: bold; color: #475569;">Hide</span>
+            </div>
+        `;
+        
+        div.querySelector(".btn-delete-slot").addEventListener("click", () => div.remove());
+        dynamicSlotsList.appendChild(div);
+    };
 
-    // আপনার ক্লিক না হওয়ার মূল বাগ ফিক্স (বাটনটি ক্লিক লিসেনারে সরাসরি বাইন্ড করা হলো)
     if (btnAddSlotRow) {
         btnAddSlotRow.onclick = function() {
-            createSlotInputRowHTML("");
+            createSlotInputRowHTML("", false);
         };
     }
 
-    // ==================== [ মেইন ভিজিটর পেজ ইঞ্জিন (index.html) ] ====================
+    // 🟢 🌟 [RING: MAIN VISITOR ENGINE - INDEX.HTML] 🌟 🟢
     if (resultsContainer) {
         onValue(ref(database, CONFIG.root), (snapshot) => {
             const serverData = snapshot.val();
             if (!serverData) return;
 
-            let liveSlots = serverData.settings && serverData.settings.globalSlots ? serverData.settings.globalSlots : CONFIG.fallbackSlots;
+            let rawSlots = serverData.settings && serverData.settings.globalSlots ? serverData.settings.globalSlots : CONFIG.fallbackSlots;
+            // হাইড করা স্লটগুলোর লিস্ট জেনারেট করা
+            let hiddenSlots = serverData.settings && serverData.settings.hiddenSlots ? serverData.settings.hiddenSlots : {};
+
+            // 👁️ ফিল্টার কন্ডিশন: যে স্লটগুলো মাস্টার হাইড করে রেখেছে, সেগুলো মেইন ইউজার পেজে ফিল্টার হয়ে বাদ চলে যাবে
+            let liveSlots = rawSlots.filter(slot => !hiddenSlots[slot]);
 
             if (serverData.settings) {
                 if (serverData.settings.subtitle) document.getElementById("site-subtitle").textContent = serverData.settings.subtitle;
@@ -104,7 +112,7 @@ const createSlotInputRowHTML = (value = "") => {
 
             resultsContainer.innerHTML = "";
             if (!serverData.records) {
-                resultsContainer.innerHTML = '<div class="loading-text">কোনো লাইভ রেজাল্ট আপলোড করা হয়নি।</div>';
+                resultsContainer.innerHTML = '<div class="loading-text">কোনো লাইভ রেজাল্ট আপলোড করা হয়নি।</div>';
                 return;
             }
 
@@ -138,7 +146,7 @@ const createSlotInputRowHTML = (value = "") => {
         });
     }
 
-    // ==================== [ সিকিউরড অ্যাডমিন প্যানেল ইঞ্জিন (admin.html) ] ====================
+    // 🔴 🌟 [RING: SECURED ADMIN PANEL ENGINE - ADMIN.HTML] 🌟 🔴
     if (adminInputsBody) {
         const btnLogin = document.getElementById("btn-login");
         const btnLogout = document.getElementById("btn-logout");
@@ -157,16 +165,15 @@ const createSlotInputRowHTML = (value = "") => {
             setTimeout(() => { statusMsg.className = "status-msg"; }, 3500);
         };
 
-        // লগইন ও রোল অথেন্টিকেশন সিঙ্ক
         if (btnLogin) {
             btnLogin.addEventListener("click", () => {
                 if (loginAttempts >= 5) {
-                    alert("সিকিউরিটি লক! ৫ মিনিট পর চেষ্টা করুন।");
+                    alert("सिक्यूरिटी लॉक! ৫ মিনিট পর চেষ্টা করুন।");
                     return;
                 }
 
                 const entryPass = passInput.value.trim();
-                if (!entryPass) return alert("পাসওয়ার্ড লিখুন!");
+                if (!entryPass) return alert("পাসওয়ার্ড লিখুন!");
 
                 get(ref(database, `${CONFIG.root}/passwords`)).then((snap) => {
                     const dbPass = snap.val() || { master: "1985", staff: "123@" };
@@ -176,7 +183,7 @@ const createSlotInputRowHTML = (value = "") => {
                         authScreen.style.display = "none";
                         mainContent.style.display = "block";
                         masterSettingsBox.style.display = "block";
-                        staffPasswordContainer.style.display = "none"; // মাস্টারের নিজের পাসওয়ার্ড চেঞ্জের ঘর লাগবে না
+                        staffPasswordContainer.style.display = "none";
                         roleBadge.textContent = "★ ROLE: MASTER ADMIN";
                         roleBadge.style.background = "#fffbeb"; roleBadge.style.color = "#b78103";
                         syncDashboardData();
@@ -185,14 +192,14 @@ const createSlotInputRowHTML = (value = "") => {
                         authScreen.style.display = "none";
                         mainContent.style.display = "block";
                         masterSettingsBox.style.display = "none";
-                        staffPasswordContainer.style.display = "flex"; // স্টাফের নিজের পাসওয়ার্ড বদলানোর ঘর ওপেন হবে
+                        staffPasswordContainer.style.display = "flex";
                         inputStaffSelfPass.value = dbPass.staff;
                         roleBadge.textContent = "● ROLE: STAFF (Results Entry)";
                         roleBadge.style.background = "#f1f5f9"; roleBadge.style.color = "#475569";
                         syncDashboardData();
                     } else {
                         loginAttempts++;
-                        alert(`ভুল পাসওয়ার্ড! আর মাত্র ${5 - loginAttempts} বার চেষ্টা করতে পারবেন।`);
+                        alert(`ভুল পাসওয়ার্ড! আর মাত্র ${5 - loginAttempts} বার চেষ্টা করতে পারবেন।`);
                     }
                 });
             });
@@ -205,19 +212,18 @@ const createSlotInputRowHTML = (value = "") => {
             });
         }
 
-        // স্টাফ প্যানেল থেকে নিজেই নিজের পাসওয়ার্ড চেঞ্জ করার বাটন লজিক
         if (btnSaveStaffSelfPass) {
             btnSaveStaffSelfPass.addEventListener("click", () => {
                 const newStaffPin = inputStaffSelfPass.value.trim();
-                if (!newStaffPin) return alert("পাসওয়ার্ড ফাঁকা রাখা যাবে না!");
+                if (!newStaffPin) return alert("পাসওয়ার্ড ফাঁকা রাখা যাবে না!");
 
                 set(ref(database, `${CONFIG.root}/passwords/staff`), newStaffPin).then(() => {
-                    showAlert("✓ আপনার স্টাফ লগইন পাসওয়ার্ডটি সফলভাবে পরিবর্তন করা হয়েছে!", true);
+                    showAlert("✓ আপনার স্টাফ লগইন পাসওয়ার্ডটি সফলভাবে পরিবর্তন করা হয়েছে!", true);
                 }).catch(err => showAlert("ত্রুটি: " + err.message, false));
             });
         }
 
-        // ডাটাবেস রিয়েল-টাইম রেন্ডারিং ও টেবিল জেনারেটর
+        // ⚙️ 🌟 [RING: REALTIME RENDERER & RESULTS STYLER ENGINE] 🌟 ⚙️
         const syncDashboardData = () => {
             const selectedDate = dateInput.value;
             if (!selectedDate) return;
@@ -226,48 +232,62 @@ const createSlotInputRowHTML = (value = "") => {
                 const rootData = snapshot.val() || {};
                 const records = rootData.records || {};
                 const currentDayData = records[selectedDate] || {};
-
                 let activeSlots = rootData.settings && rootData.settings.globalSlots ? rootData.settings.globalSlots : CONFIG.fallbackSlots;
+                let hiddenSlots = rootData.settings && rootData.settings.hiddenSlots ? rootData.settings.hiddenSlots : {};
 
                 adminInputsBody.innerHTML = "";
                 if (activeRole === "master") dynamicSlotsList.innerHTML = ""; 
 
-                // স্টাফ ও মাস্টারের টেবিলে ডাইনামিক রো তৈরি
                 activeSlots.forEach((slotName) => {
                     const pattiVal = (currentDayData[slotName] && currentDayData[slotName].patti && currentDayData[slotName].patti !== "-") ? currentDayData[slotName].patti : "";
                     const singleVal = (currentDayData[slotName] && currentDayData[slotName].single && currentDayData[slotName].single !== "-") ? currentDayData[slotName].single : "";
 
                     const tr = document.createElement("tr");
+                    
+                    // 🟢 [SUBMIT CHECK]: আগে থেকে সাবমিট করা থাকলে লোড হওয়ার সময়ই সবুজ ব্যাকগ্রাউন্ড ট্র্রিগার হবে
+                    if (pattiVal !== "" || singleVal !== "") {
+                        tr.className = "slot-row-completed";
+                    }
+
                     tr.innerHTML = `
                         <td><input type="text" value="${slotName}" readonly style="background:#e2e8f0; font-weight:bold; cursor:not-allowed;"></td>
                         <td><input type="text" class="cell-patti" value="${pattiVal}" placeholder="-"></td>
                         <td><input type="text" class="cell-single" value="${singleVal}" placeholder="-"></td>
-                        <td><button type="button" class="btn-cell-submit">Submit</button></td>
+                        <td>
+                            <button type="button" class="btn-cell-submit">Submit</button>
+                            ${(pattiVal !== "" || singleVal !== "") ? '<span class="double-check-mark"> ✓✓</span>' : ''}
+                        </td>
                     `;
 
-                // --- রেজাল্ট সাবমিট ও ডাবল কনফার্মেশন প্রটেকশন লজিক ---
-tr.querySelector(".btn-cell-submit").addEventListener("click", () => {
-    const finalPatti = tr.querySelector(".cell-patti").value.trim() || "-";
-    const finalSingle = tr.querySelector(".cell-single").value.trim() || "-";
-    
-    if (!confirm(`আপনি কি নিশ্চিত যে ${slotName} স্লটে [ পাত্তি: ${finalPatti}, সিঙ্গেল: ${finalSingle} ] সাবমিট করবেন?`)) {
-        return;
-    }
-    
-    const rowPath = `${CONFIG.root}/records/${selectedDate}/${slotName}`;
-    set(ref(database, rowPath), { patti: finalPatti, single: finalSingle }).then(() => {
-        showAlert(`${slotName} এর রেজাল্ট সফলভাবে লাইভ সেভ হয়েছে`, true);
-        
-        // 🟢 ঠিক এইখানে সাকসেস কালার ও ডবল টিকের ফাংশনটি কল করে দিন
-        const submitBtn = tr.querySelector(".btn-cell-submit");
-        markSlotAsCompleted(tr, submitBtn);
-        
-    }).catch(err => showAlert("ত্রুটি: " + err.message, false));
-});
+                    // 💾 🌟 [RING: FIREBASE RECORDS SUBMIT LOGIC] 🌟 💾
+                    tr.querySelector(".btn-cell-submit").addEventListener("click", () => {
+                        const finalPatti = tr.querySelector(".cell-patti").value.trim() || "-";
+                        const finalSingle = tr.querySelector(".cell-single").value.trim() || "-";
+                        
+                        if (!confirm(`আপনি কি নিশ্চিত যে ${slotName} স্লটে [ পাত্তি: ${finalPatti}, SINGLE: ${finalSingle} ] সাবমিট করবেন?`)) {
+                            return;
+                        }
+                        
+                        const rowPath = `${CONFIG.root}/records/${selectedDate}/${slotName}`;
+                        set(ref(database, rowPath), { patti: finalPatti, single: finalSingle }).then(() => {
+                            showAlert(`${slotName} এর রেজাল্ট সফলভাবে লাইভ সেভ হয়েছে`, true);
+                            
+                            // সাকসেস কালার ও ডবল টিক একশন ট্রিগার
+                            const submitBtn = tr.querySelector(".btn-cell-submit");
+                            markSlotAsCompleted(tr, submitBtn);
+                            
+                        }).catch(err => showAlert("ত্রুটি: " + err.message, false));
+                    });
 
-                // মাস্টার সেটিংসের ডেটা ইনপুট বক্সে রেন্ডার করা
+                    adminInputsBody.appendChild(tr);
+                });
+
                 if (activeRole === "master") {
-                    activeSlots.forEach(slot => createSlotInputRowHTML(slot));
+                    // মাস্টার রো জেনারেটরে পাস করা হলো স্লটটি আগে থেকে হাইড কিনা
+                    activeSlots.forEach(slot => {
+                        const isSlotHidden = hiddenSlots[slot] ? true : false;
+                        createSlotInputRowHTML(slot, isSlotHidden);
+                    });
 
                     if (rootData.settings) {
                         document.getElementById("input-live-status").value = rootData.settings.liveStatus || "live";
@@ -289,21 +309,30 @@ tr.querySelector(".btn-cell-submit").addEventListener("click", () => {
         dateInput.value = getTodayDateStr();
         dateInput.addEventListener("change", syncDashboardData);
 
-        // ==================== [ ৩. মাস্টার অল-ইন-ওয়ান সেভ বাটন লজিক ] ====================
+        // 💾 🌟 [RING: MASTER GLOBAL ROW SAVE & HIDE DICTIONARY BUILDER] 🌟 💾
         if (btnSaveSettings) {
             btnSaveSettings.addEventListener("click", () => {
                 if (activeRole !== "master") return alert("অনুমতি নেই!");
 
                 const freshSlotsArray = [];
-                const inputElements = document.querySelectorAll(".dynamic-slot-time-value");
+                const hiddenSlotsMap = {};
+                const rowItems = document.querySelectorAll(".slot-row-item");
                 
-                for (let input of inputElements) {
-                    const val = input.value.trim();
+                for (let item of rowItems) {
+                    const timeInput = item.querySelector(".dynamic-slot-time-value");
+                    const hideCheckbox = item.querySelector(".slot-hide-checkbox");
+                    
+                    const val = timeInput.value.trim();
                     if (!val) {
                         alert("কোনো টাইম স্লটের নাম ফাঁকা রাখা যাবে না!");
                         return;
                     }
                     freshSlotsArray.push(val);
+                    
+                    // চেকবক্সে টিক মারা থাকলে ট্রু ম্যাপ হবে
+                    if (hideCheckbox && hideCheckbox.checked) {
+                        hiddenSlotsMap[val] = true;
+                    }
                 }
 
                 if (freshSlotsArray.length === 0) {
@@ -319,7 +348,8 @@ tr.querySelector(".btn-cell-submit").addEventListener("click", () => {
                     pattiUrl: document.getElementById("input-patti-url").value.trim() || "#",
                     customAlert: document.getElementById("input-alert").value.trim(),
                     bgUrl: document.getElementById("input-bg-url").value.trim(),
-                    globalSlots: freshSlotsArray
+                    globalSlots: freshSlotsArray,
+                    hiddenSlots: hiddenSlotsMap // হাইড করা ম্যাপিং অবজেক্ট ডাটাবেসে সেভ হবে
                 };
 
                 const updatedPasswords = {
@@ -332,14 +362,32 @@ tr.querySelector(".btn-cell-submit").addEventListener("click", () => {
                 packet[`${CONFIG.root}/passwords`] = updatedPasswords;
 
                 update(ref(database), packet).then(() => {
-                    showAlert("✓ অভিনন্দন! গ্লোবাল র (Rows), স্মার্ট সেটিংস এবং পাসওয়ার্ড সফলভাবে লাইভ আপডেট হয়েছে!", true);
+                    showAlert("✓ অভিনন্দন! গ্লোবাল র (Rows), স্মার্ট হাইড সেটিংস এবং পাসওয়ার্ড সফলভাবে লাইভ আপডেট হয়েছে!", true);
                     syncDashboardData();
-                }).catch(err => showAlert("ব্যর্থ হয়েছে: " + err.message, false));
+                }).catch(err => showAlert("ব্যর্থ হয়েছে: " + err.message, false));
             });
         }
     }
+    
+    // ⏰ 🌟 [RING: NEXT DAY AUTO-RESET CLEANER ENGINE] 🌟 ⏰
+    function checkAndResetDailySlots() {
+        const today = new Date().toDateString();
+        const lastSavedDate = localStorage.getItem('last_admin_visit_date');
+        
+        if (lastSavedDate && lastSavedDate !== today) {
+            // নতুন দিন ডিটেক্ট হলে লোকাল স্টাইলগুলো ফ্ল্যাশআউট হয়ে যাবে
+            document.querySelectorAll('.slot-row-completed').forEach(row => {
+                row.classList.remove('slot-row-completed');
+            });
+            document.querySelectorAll('.double-check-mark').forEach(el => el.remove());
+        }
+        localStorage.setItem('last_admin_visit_date', today);
+    }
+    
+    window.addEventListener('DOMContentLoaded', checkAndResetDailySlots);
 });
-// ফাইলের একদম শেষে বা যেকোনো ফাঁকা জায়গায় এটি জাস্ট রেখে দিন
+
+// 🟢 🌟 [RING: DYNAMIC SUBMIT SUCCESS STYLER FUNCTION] 🌟 🟢
 function markSlotAsCompleted(rowElement, submitButton) {
     rowElement.classList.add('slot-row-completed');
     
