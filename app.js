@@ -42,17 +42,23 @@ document.addEventListener("DOMContentLoaded", function () {
     let activeRole = "guest";
 
     // --- ফাট ফাটাফাট ইনপুট রো তৈরি করার ইন্টারনাল ফাংশন ---
-    const createSlotInputRowHTML = (value = "") => {
-        if (!dynamicSlotsList) return;
-        const div = document.createElement("div");
-        div.className = "slot-row-item";
-        div.innerHTML = `
-            <input type="text" class="dynamic-slot-time-value" value="${value}" placeholder="যেমন: 10:20 AM বা 02:30 PM">
-            <button type="button" class="btn-delete-slot">Delete</button>
-        `;
-        div.querySelector(".btn-delete-slot").addEventListener("click", () => div.remove());
-        dynamicSlotsList.appendChild(div);
-    };
+const createSlotInputRowHTML = (value = "") => {
+    if (!dynamicSlotsList) return;
+    const div = document.createElement("div");
+    div.className = "slot-row-item";
+    div.innerHTML = `
+        <input type="text" class="dynamic-slot-time-value" value="${value}" placeholder="Time...">
+        <button type="button" class="btn-delete-slot">Delete</button>
+        
+        <div class="hide-show-wrapper" style="display: inline-flex; align-items: center; gap: 5px; margin-left: 10px;">
+            <input type="checkbox" class="slot-hide-checkbox" onchange="toggleSlotVisibility(this)">
+            <span style="font-size: 13px; font-weight: bold; color: #475569;">Hide</span>
+        </div>
+    `;
+    
+    div.querySelector(".btn-delete-slot").addEventListener("click", () => div.remove());
+    dynamicSlotsList.appendChild(div);
+};
 
     // আপনার ক্লিক না হওয়ার মূল বাগ ফিক্স (বাটনটি ক্লিক লিসেনারে সরাসরি বাইন্ড করা হলো)
     if (btnAddSlotRow) {
