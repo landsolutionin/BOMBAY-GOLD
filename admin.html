@@ -1,7 +1,16 @@
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="firebase-config.js"></script>
+
+<input id="time" placeholder="সময়">
+<input id="res" placeholder="রেজাল্ট">
+<button onclick="save()">পাবলিশ করুন</button>
+
 <script>
-    function saveData() {
-        let newData = { "১২:২০": document.getElementById('r1').value };
-        db.ref('results').update(newData);
+    function save() {
+        let t = document.getElementById('time').value;
+        let r = document.getElementById('res').value;
+        db.ref('results/' + t).set(r);
         alert("আপডেট হয়েছে!");
     }
 </script>
