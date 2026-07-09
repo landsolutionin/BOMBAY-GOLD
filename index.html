@@ -1,22 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-    <title>BOMBAY GOLD</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <meta charset="UTF-8">
+    <title>BOMBAY GOLD - Live Dashboard</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background: #0b0d17; color: #fff; margin: 0; padding: 0; }
+        
+        /* Hero Section */
+        .hero { background: linear-gradient(180deg, #1a1a2e, #0b0d17); padding: 20px; text-align: center; border-bottom: 3px solid #d7b15c; }
+        .hero h1 { color: #d7b15c; margin: 0; }
+        
+        /* Marquee Section */
+        .marquee { background: #1f5aa8; padding: 10px; font-weight: bold; }
+
+        /* Results Grid */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; padding: 20px; }
+        .result-box { background: #1a1a2e; border: 2px solid #d7b15c; padding: 15px; border-radius: 50%; text-align: center; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 5px #d7b15c; } 50% { box-shadow: 0 0 20px #d7b15c; } 100% { box-shadow: 0 0 5px #d7b15c; } }
+
+        /* Menu Section */
+        .menu-bar { display: flex; justify-content: center; gap: 20px; padding: 20px; }
+        .menu-btn { background: #d7b15c; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <div id="display">
-        <h1>আজকের রেজাল্ট</h1>
-        <div id="results">লোড হচ্ছে...</div>
+
+    <div class="hero">
+        <h1>BOMBAY GOLD</h1>
+        <p>লাইভ রেজাল্ট প্যানেল</p>
     </div>
-    <script src="firebase-config.js"></script>
+
+    <div class="marquee">
+        <marquee>স্বাগতম! আজকের রেজাল্ট নিচে আপডেট করা হয়েছে।</marquee>
+    </div>
+
+    <div class="menu-bar">
+        <a href="#" class="menu-btn">Tips</a>
+        <a href="#" class="menu-btn">Patti Chart</a>
+    </div>
+
+    <div class="grid-container" id="liveResults">
+        </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
+            databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "live-result-b9155"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         db.ref('results').on('value', snapshot => {
             const data = snapshot.val();
-            let html = "";
-            for(let time in data) html += `<p>${time}: <b>${data[time]}</b></p>`;
-            document.getElementById('results').innerHTML = html;
+            const container = document.getElementById('liveResults');
+            container.innerHTML = '';
+            for(let time in data) {
+                container.innerHTML += `<div class="result-box"><div>${time}</div><b>${data[time]}</b></div>`;
+            }
         });
     </script>
 </body>
