@@ -1,0 +1,7 @@
+<script>
+    function saveData() {
+        let newData = { "১২:২০": document.getElementById('r1').value };
+        db.ref('results').update(newData);
+        alert("আপডেট হয়েছে!");
+    }
+</script>
