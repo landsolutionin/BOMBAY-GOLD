@@ -2,44 +2,43 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>BOMBAY GOLD - Live Dashboard</title>
+    <title>BOMBAY GOLD</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background: #0b0d17; color: #fff; margin: 0; padding: 0; }
+        body { margin: 0; background-color: #0b0d17; color: #fff; font-family: sans-serif; }
         
-        /* Hero Section */
-        .hero { background: linear-gradient(180deg, #1a1a2e, #0b0d17); padding: 20px; text-align: center; border-bottom: 3px solid #d7b15c; }
-        .hero h1 { color: #d7b15c; margin: 0; }
+        /* ১. হেডার হিরো সেকশন */
+        .hero { text-align: center; padding: 20px; border-bottom: 2px solid #d7b15c; }
+        .hero h1 { color: #d7b15c; margin: 0; font-size: 28px; }
         
-        /* Marquee Section */
-        .marquee { background: #1f5aa8; padding: 10px; font-weight: bold; }
-
-        /* Results Grid */
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; padding: 20px; }
-        .result-box { background: #1a1a2e; border: 2px solid #d7b15c; padding: 15px; border-radius: 50%; text-align: center; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 5px #d7b15c; } 50% { box-shadow: 0 0 20px #d7b15c; } 100% { box-shadow: 0 0 5px #d7b15c; } }
-
-        /* Menu Section */
-        .menu-bar { display: flex; justify-content: center; gap: 20px; padding: 20px; }
-        .menu-btn { background: #d7b15c; color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        /* ২. রানিং স্ক্রল সেকশন */
+        .marquee-box { background: #1f5aa8; color: white; padding: 8px; font-weight: bold; font-size: 14px; }
+        
+        /* ৩. মেনু (Tips & Patti) */
+        .nav-menu { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .nav-btn { background: #d7b15c; color: #000; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        
+        /* ৪. লাইভ রেজাল্ট সেকশন (সার্কেল বক্স) */
+        .result-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 20px; }
+        .circle-box { width: 80px; height: 80px; border: 2px solid #d7b15c; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { border-color: #d7b15c; } 50% { border-color: #fff; } }
     </style>
 </head>
 <body>
 
     <div class="hero">
         <h1>BOMBAY GOLD</h1>
-        <p>লাইভ রেজাল্ট প্যানেল</p>
     </div>
 
-    <div class="marquee">
-        <marquee>স্বাগতম! আজকের রেজাল্ট নিচে আপডেট করা হয়েছে।</marquee>
+    <div class="marquee-box">
+        <marquee>আজকের লাইভ রেজাল্ট আপডেট চলছে...</marquee>
     </div>
 
-    <div class="menu-bar">
-        <a href="#" class="menu-btn">Tips</a>
-        <a href="#" class="menu-btn">Patti Chart</a>
+    <div class="nav-menu">
+        <div class="nav-btn">Tips</div>
+        <div class="nav-btn">Patti Chart</div>
     </div>
 
-    <div class="grid-container" id="liveResults">
+    <div class="result-container" id="live-data">
         </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -53,12 +52,13 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // অটো-আপডেট ফাংশন
         db.ref('results').on('value', snapshot => {
             const data = snapshot.val();
-            const container = document.getElementById('liveResults');
+            const container = document.getElementById('live-data');
             container.innerHTML = '';
-            for(let time in data) {
-                container.innerHTML += `<div class="result-box"><div>${time}</div><b>${data[time]}</b></div>`;
+            for(let key in data) {
+                container.innerHTML += `<div class="circle-box"><div>${key}</div><b style="font-size:20px">${data[key]}</b></div>`;
             }
         });
     </script>
