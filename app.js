@@ -1,4 +1,9 @@
-// ১. ফায়ারবেস কনফিগারেশন (আপনার কনসোল থেকে পাওয়া কপি করা অংশ এখানে বসান)
+/** * BOMBAY-GOLD MASTER ENGINE 
+ * এই ফাইলটি আপনার প্রজেক্টের একমাত্র জাভাস্ক্রিপ্ট ফাইল। 
+ * ভবিষ্যতে নতুন কিছু যোগ করতে চাইলে এই ফাইলের নিচে কমেন্ট অনুযায়ী যোগ করবেন।
+ */
+
+// ১. কনফিগারেশন
 const firebaseConfig = {
     apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
     authDomain: "live-result-b9155.firebaseapp.com",
@@ -6,47 +11,49 @@ const firebaseConfig = {
     projectId: "live-result-b9155",
     storageBucket: "live-result-b9155.firebasestorage.app",
     messagingSenderId: "495121483481",
-    appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
-    measurementId: "G-DFDW40QF87"
+    appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8"
 };
 
-// ফায়ারবেস ইনিশিয়ালাইজ করা
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const getToday = () => new Date().toISOString().split('T')[0];
 
-// ২. ইনডেক্স পেজের জন্য রেজাল্ট দেখানো
-if (document.getElementById('result-body')) {
-    database.ref('results').on('value', (snapshot) => {
-        const tbody = document.getElementById('result-body');
-        tbody.innerHTML = ""; // টেবিল রিসেট করা
-        
-        const data = snapshot.val();
-        for (let key in data) {
-            let row = `<tr>
-                        <td>${data[key].time}</td>
-                        <td>${data[key].result}</td>
-                       </tr>`;
-            tbody.innerHTML += row;
-        }
-    });
+// ২. কোর ডাটাবেস ম্যানেজার (যেকোনো ডাটাবেসে রূপান্তরযোগ্য)
+const DataEngine = {
+    save: (path, data) => db.ref(`${path}/${getToday()}`).push(data),
+    listen: (path, callback) => db.ref(`${path}/${getToday()}`).on('value', (s) => callback(s.val()))
+};
 
-    // আজকের তারিখ অটোমেটিক সেট করা
-    document.getElementById('result-date').innerText = "BOMBAY-GOLD Live Result " + new Date().toLocaleDateString();
-}
-
-// ৩. অ্যাডমিন পেজের জন্য ডেটা সেভ করা
-if (document.getElementById('add-result-btn')) {
-    document.getElementById('add-result-btn').addEventListener('click', () => {
+// ৩. অ্যাডমিন লজিক (রেজাল্ট আপডেট)
+const addBtn = document.getElementById('add-result-btn');
+if (addBtn) {
+    addBtn.addEventListener('click', () => {
         const time = document.getElementById('time-input').value;
         const result = document.getElementById('result-input').value;
-
         if (time && result) {
-            database.ref('results/' + Date.now()).set({
-                time: time,
-                result: result
-            }).then(() => alert("রেজাল্ট সফলভাবে যোগ হয়েছে!"));
-        } else {
-            alert("সব ঘর পূরণ করুন");
+            DataEngine.save('results', { time, result });
+            alert("সফলভাবে আপডেট হয়েছে!");
         }
     });
 }
+
+// ৪. ইনডেক্স পেজ লজিক (লাইভ রেজাল্ট)
+const resultBody = document.getElementById('result-body');
+if (resultBody) {
+    DataEngine.listen('results', (data) => {
+        resultBody.innerHTML = "";
+        for (let key in data) {
+            resultBody.innerHTML += `<tr><td>${data[key].time}</td><td>${data[key].result}</td></tr>`;
+        }
+    });
+}
+
+// ৫. প্লেয়ার লজিক (নিরাপদ)
+function playerSystem(action, payload) {
+    // এখানে প্লেয়ার লগইন, বেটিং এবং উইথড্র লজিক থাকবে
+    // payload: {name, pin, type, amount, etc}
+    console.log("Player System Active: " + action);
+}
+
+// ভবিষ্যতে নতুন ফিচার যোগ করার জায়গা এখান থেকে শুরু করুন:
+// (যেমন: নতুন কোন গেম বা লজিক)
