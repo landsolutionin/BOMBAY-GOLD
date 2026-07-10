@@ -1,0 +1,99 @@
+/* জেনারেল স্টাইল */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    text-align: center;
+}
+
+/* টপ নোটিফিকেশন বার */
+.top-notice {
+    background-color: #d32f2f;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    display: none; /* নোটিশ থাকলে JS দিয়ে অন হবে */
+}
+
+/* হেডার ও ব্র্যান্ডিং */
+.header-area {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.brand-title {
+    font-size: 32px;
+    color: #ff9800;
+    font-weight: bold;
+    margin: 0;
+}
+.live-badge {
+    background-color: #28a745;
+    color: white;
+    padding: 3px 8px;
+    font-size: 14px;
+    border-radius: 3px;
+    display: inline-block;
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* কুইক বাটন সেকশন */
+.btn-container {
+    margin: 20px auto;
+    max-width: 500px;
+    display: flex;
+    justify-content: space-around;
+}
+.action-btn {
+    padding: 12px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    text-decoration: none;
+    width: 40%;
+}
+.btn-tips { background-color: #007bff; }
+.btn-patti { background-color: #673ab7; }
+
+/* রেজাল্ট টেবিল স্টাইল */
+.table-container {
+    background: white;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.table-title {
+    background-color: #00468c;
+    color: white;
+    padding: 10px;
+    margin: -15px -15px 15px -15px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-size: 18px;
+}
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.result-table th, .result-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.result-table th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+.patti-txt { color: #d32f2f; font-size: 18px; }
+.single-txt { color: #1565c0; font-size: 22px; }
