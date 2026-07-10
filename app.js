@@ -1,54 +1,42 @@
-// App.js - সেন্ট্রাল সিস্টেম কন্ট্রোলার
-import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, onValue, set, remove, transaction, serverTimestamp } from 'firebase/database';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
-  authDomain: "live-result-b9155.firebaseapp.com",
-  databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "live-result-b9155",
-  storageBucket: "live-result-b9155.firebasestorage.app",
-  messagingSenderId: "495121483481",
-  appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
-  measurementId: "G-DFDW40QF87"
+// ফায়ারবেস কনফিগারেশন (আপনার প্রজেক্টের ডাটা এখানে বসাবেন)
+ const firebaseConfig = {
+    apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
+    authDomain: "live-result-b9155.firebaseapp.com",
+    databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "live-result-b9155",
+    storageBucket: "live-result-b9155.firebasestorage.app",
+    messagingSenderId: "495121483481",
+    appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
+    measurementId: "G-DFDW40QF87"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-// অটো-রিসেট লজিক: প্রতিদিন রাত ১২টায় লাইভ সেশন ও বেট পরিষ্কার হবে
-function scheduleMidnightReset() {
-  const now = new Date();
-  const midnight = new Date(now);
-  midnight.setHours(24, 0, 0, 0);
-  
-  setTimeout(() => {
-    remove(ref(db, 'Live_Session'));
-    remove(ref(db, 'bets'));
-    scheduleMidnightReset();
-  }, midnight - now);
+// ইন্টারফেস চেঞ্জ ফাংশন - হেডার বা লোগো পরিবর্তনের জন্য
+function updateInterface(elementId, value) {
+  db.ref('interfaceSettings/' + elementId).set(value);
 }
-scheduleMidnightReset();
 
-// উইনিং ক্যালকুলেটর: সিঙ্গেল (x9) ও পাত্তি (x11.5)
-export const processGameResults = (resultData) => {
-  const betsRef = ref(db, 'bets');
-  onValue(betsRef, (snapshot) => {
-    const allBets = snapshot.val();
-    if (!allBets) return;
+// সাব-অ্যাডমিন এবং মাস্টার অ্যাডমিন সিকিউরিটি চেক
+function checkAuth(role) {
+  // এখানে লগইন স্ট্যাটাস চেক করা হবে
+}
+// রেজাল্ট পাবলিশিং ফাংশন - যা গ্রিন সিগন্যাল ও ডবল চেক সাপোর্ট করবে
+function publishResult(time, patti, result) {
+    const data = {
+        time: time,
+        patti: patti,
+        result: result,
+        status: 'green', // সাবমিট করলে গ্রিন হবে
+        check: 'double-check' // ডবল চেক ভেরিফিকেশন
+    };
+    db.ref('dailyResults/' + time.replace(':', '_')).set(data);
+}
 
-    Object.entries(allBets).forEach(([userId, userBets]) => {
-      Object.values(userBets).forEach(bet => {
-        let win = 0;
-        if (bet.patti === resultData.patti) win = bet.amount * 11.5;
-        else if (bet.single === resultData.result) win = bet.amount * 9;
-
-        if (win > 0) {
-          transaction(ref(db, `wallets/${userId}/winningBalance`), (cur) => (cur || 0) + win);
-        }
-      });
-    });
-  }, { onlyOnce: true });
-};
-
-export { db };
+// অটোমেটিক ডাটা রিড ফাংশন (যা আপনার মেইন ওয়েবসাইটে রেজাল্ট দেখাবে)
+db.ref('dailyResults').on('value', (snapshot) => {
+    const results = snapshot.val();
+    console.log("ডাটা আপডেট হয়েছে:", results);
+    // এখানে টেবিল আপডেট করার কোড বসবে
+});
