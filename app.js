@@ -1,22 +1,9 @@
-// আপনার Firebase Configuration
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE",
-    authDomain: "live-result-b9155.firebaseapp.com",
-    projectId: "live-result-b9155",
-    storageBucket: "live-result-b9155.firebasestorage.app",
-    messagingSenderId: "495121483481",
-    appId: "YOUR_APP_ID_HERE"
-};
-// Firebase চালু করা
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
-// নোটিফিকেশন বার এবং বাটন লিঙ্ক লাইভ আপডেট করা
+// নোটিফিকেশন বার, বাটন লিঙ্ক এবং ব্যাকগ্রাউন্ড ইমেজ লাইভ আপডেট করা
 db.collection("SystemSettings").doc("General").onSnapshot((doc) => {
     if (doc.exists) {
         const data = doc.data();
         
-        // নোটিশ কন্ট্রোল
+        // ১. নোটিশ কন্ট্রোল
         if(data.notice && data.notice_status === "on") {
             document.getElementById("notification-bar").innerText = data.notice;
             document.getElementById("notification-bar").style.display = "block";
@@ -24,9 +11,17 @@ db.collection("SystemSettings").doc("General").onSnapshot((doc) => {
             document.getElementById("notification-bar").style.display = "none";
         }
 
-        // বাটন লিঙ্ক কন্ট্রোল
+        // ২. বাটন লিঙ্ক কন্ট্রোল
         document.getElementById("tips-link").href = data.tips_url || "#";
         document.getElementById("patti-link").href = data.patti_url || "#";
+
+        // ৩. ডাইনামিক ব্যাকগ্রাউন্ড ইমেজ কন্ট্রোল (নতুন ফিচার)
+        if(data.bg_url) {
+            document.body.style.backgroundImage = `url('${data.bg_url}')`;
+        } else {
+            document.body.style.backgroundImage = "none";
+            document.body.style.backgroundColor = "#0f172a"; // ইমেজ না থাকলে ডিফল্ট ডার্ক কালার
+        }
     }
 });
 
@@ -35,11 +30,11 @@ db.collection("SystemSettings").doc("Slots").onSnapshot((slotDoc) => {
     if (slotDoc.exists) {
         const timeSlots = slotDoc.data().active_slots || [];
 
-        // আজকের তারিখ বের করা (যেমন: 10-07-2026)
+        // আজকের তারিখ বের করা
         const today = new Date();
         const dateString = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
 
-        // আজ এবং গতকালের রেজাল্ট একসাথে শোনা (Real-time tracking)
+        // ডাটাবেস থেকে রিয়েল-টাইম রেজাল্ট আনা
         db.collection("GameResults").onSnapshot((querySnapshot) => {
             let htmlContent = "";
             let resultsData = {};
@@ -48,12 +43,10 @@ db.collection("SystemSettings").doc("Slots").onSnapshot((slotDoc) => {
                 resultsData[doc.id] = doc.data();
             });
 
-            // আমরা আজকের এবং গত কয়েকদিনের টেবিল দেখাবো (ডাইনামিকালি)
-            // আপাতত আজকের টেবিলটি তৈরি করছি
+            // আজকের টেবিল সবার ওপরে যোগ হবে
             htmlContent += createTableHTML(dateString, timeSlots, resultsData[dateString] || {});
 
-            // যদি গতকালের ডেটা থাকে তাও নিচে যোগ হবে
-            // (পুরোনো রেজাল্ট হিস্ট্রি স্বয়ংক্রিয়ভাবে নিচে জমা হবে)
+            // পুরোনো রেজাল্ট হিস্ট্রি নিজে থেকেই নিচে একটার পর একটা সাজানো থাকবে
             Object.keys(resultsData).sort().reverse().forEach(dateKey => {
                 if(dateKey !== dateString) {
                     htmlContent += createTableHTML(dateKey, timeSlots, resultsData[dateKey]);
@@ -65,7 +58,7 @@ db.collection("SystemSettings").doc("Slots").onSnapshot((slotDoc) => {
     }
 });
 
-// টেবিল তৈরি করার একটি কমন ফাংশন
+// টেবিল তৈরি করার কমন ফাংশন
 function createTableHTML(date, slots, dayResults) {
     let tableHtml = `
         <div class="table-container">
