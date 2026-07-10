@@ -1,70 +1,59 @@
-
 <!DOCTYPE html>
-<html lang=class="str">"bn">
+<html lang="bn">
 <head>
-  <meta charset=class="str">"UTF-class="num">8">
-  <meta name=class="str">"viewport" content=class="str">"width=device-width, initial-scale=class="num">1.0, maximum-scale=class="num">1.0, user-scalable=no, viewport-fit=cover">
-  <title>BOMBAY-GOLD</title>
-  <script src=class="str">"https:class="cmtclass="str">">//www.gstatic.com/firebasejs/class="num">9.22.class="num">1/firebase-app-compat.js"></script>
-  <script src=class="str">"https:class="cmtclass="str">">//www.gstatic.com/firebasejs/class="num">9.22.class="num">1/firebase-database-compat.js"></script>
-  <style>
-    * { margin: class="num">0; padding: class="num">0; box-sizing: border-box; }
-    body { 
-      font-family: 'Segoe UIclass="str">', 'Noto Sans Bengaliclass="str">', Roboto, sans-serif; 
-      min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-      background-size: cover; background-position: center; background-repeat: no-repeat; 
-      background-attachment: fixed; transition: background-image class="num">0.4s ease-in-out; 
-      padding: 1rem; background-color: class=class="str">"cmt">#1a1e2b; color: white;
-    }
-    body::before { content: class="str">""; position: fixed; top: class="num">0; left: class="num">0; width: class="num">100%; height: class="num">100%; background: rgba(class="num">0, class="num">0, class="num">0, class="num">0.45); z-index: class="num">0; pointer-events: none; }
-    
-    .main-container { position: relative; z-index: class="num">2; width: class="num">100%; max-width: 650px; margin: class="num">0 auto; display: flex; flex-direction: column; align-items: center; gap: class="num">1.5rem; padding: 1rem class="num">0.5rem; }
-
-    class=class="str">"cmt">/* হিরো সেকশন স্টাইল */
-    .hero-section { width: class="num">100%; text-align: center; padding: 20px 10px; background: rgba(class="num">255, class="num">255, class="num">255, class="num">0.1); backdrop-filter: blur(10px); border-radius: 2rem; border: 1px solid rgba(class="num">255, class="num">215, class="num">0, class="num">0.3); box-shadow: class="num">0 10px 20px rgba(class="num">0,class="num">0,class="num">0,class="num">0.3); }
-    .hero-content h1 { font-size: class="num">1.6rem; margin-bottom: 8px; color: class=class="str">"cmt">#fff; }
-    .brand-name { color: class=class="str">"cmt">#facc15; font-weight: bold; animation: neonGlow 2s infinite alternate; text-transform: uppercase; }
-    @keyframes neonGlow { from { text-shadow: class="num">0 class="num">0 5px class=class="str">"cmt">#facc15; } to { text-shadow: class="num">0 class="num">0 15px #ff0055; } }
-    .hero-content p { font-size: class="num">0.95rem; margin-bottom: 15px; opacity: class="num">0.9; }
-    .cta-button { background: linear-gradient(90deg, class=class="str">"cmt">#ff0055, #facc15); border: none; padding: 10px 25px; color: #class="num">000; font-weight: bold; border-radius: 50px; cursor: pointer; transition: transform class="num">0.3s; }
-    .cta-button:hover { transform: scale(class="num">1.05); }
-
-    .notice-bar { width: class="num">100%; background: rgba(class="num">255, class="num">255, class="num">255, class="num">0.92); backdrop-filter: blur(10px); border-radius: class="num">2.5rem; padding: class="num">0.9rem class="num">1.8rem; text-align: center; box-shadow: class="num">0 10px 25px rgba(class="num">0,class="num">0,class="num">0,class="num">0.3); border: 1px solid rgba(class="num">255,class="num">215,class="num">0,class="num">0.5); font-weight: class="num">600; font-size: class="num">1.2rem; color: class=class="str">"cmt">#1e293b; min-height: 4rem; display: flex; align-items: center; justify-content: center; }
-    .live-button-wrapper { display: flex; justify-content: center; margin: class="num">0.5rem class="num">0; }
-    .status-button { width: 110px; height: 110px; border-radius: class="num">50%; background-color: class=class="str">"cmt">#dc2626; box-shadow: class="num">0 class="num">0 25px rgba(class="num">220,class="num">38,class="num">38,class="num">0.7); border: 4px solid rgba(class="num">255,class="num">255,class="num">255,class="num">0.9); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: class="num">1.6rem; color: white; transition: class="num">0.3s; }
-    .status-button.on { background-color: class=class="str">"cmt">#16a34a; box-shadow: class="num">0 class="num">0 45px #22c55e; animation: pulseGreen class="num">1.3s infinite ease-in-out; }
-    @keyframes pulseGreen { class="num">0%, class="num">100% { transform: scale(class="num">1); } class="num">50% { transform: scale(class="num">1.06); } }
-    .result-section { width: class="num">100%; background: rgba(class="num">20, class="num">20, class="num">30, class="num">0.8); backdrop-filter: blur(14px); border-radius: 2rem; padding: class="num">1.5rem class="num">1.2rem; box-shadow: class="num">0 20px 35px rgba(class="num">0,class="num">0,class="num">0,class="num">0.6); border: 1px solid rgba(class="num">255,class="num">255,class="num">255,class="num">0.25); }
-    .result-section.hidden-section { display: none !important; }
-    .result-title { font-size: class="num">1.5rem; font-weight: class="num">700; text-align: center; color: class=class="str">"cmt">#facc15; margin-bottom: class="num">1.2rem; border-bottom: 2px dashed rgba(class="num">255,class="num">255,class="num">255,class="num">0.4); padding-bottom: class="num">0.5rem; }
-    .result-row { background: rgba(class="num">255, class="num">255, class="num">255, class="num">0.1); border-radius: class="num">1.2rem; padding: class="num">0.9rem class="num">1.2rem; margin-bottom: class="num">0.8rem; display: flex; justify-content: space-between; align-items: center; border-left: 6px solid class=class="str">"cmt">#fbbf24; }
-    .result-time { background: class=class="str">"cmt">#0f172a; padding: class="num">0.3rem class="num">0.9rem; border-radius: 2rem; color: #fcd34d; font-weight: class="num">700; }
-    .result-value { font-weight: class="num">800; font-size: class="num">1.6rem; color: class=class="str">"cmt">#fbbf24; }
-    .footer-section { width: class="num">100%; text-align: center; margin-top: class="num">0.8rem; padding: class="num">0.9rem; background: rgba(class="num">0, class="num">0, class="num">0, class="num">0.5); border-radius: 3rem; color: white; border: 1px solid rgba(class="num">255,class="num">255,class="num">255,class="num">0.2); }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <title>BOMBAY-GOLD | Live Result</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 </head>
-<body id=class="str">"mainBody">
-  <div class=class="str">"main-container">
-    
-    <section class=class="str">"hero-section">
-        <div class=class="str">"hero-content">
-            <h3>Welcome to <span class=class="str">"brand-name">BOMBAY-GOLD</span></h3>
-            <p>লাইভ রেজাল্ট সবার আগে পেতে নিয়মিত আমাদের ওয়েবসাইট ভিজিট করুন।</p>
-            <button class=class="str">"cta-button" onclick=class="str">"window.scrollTo({top: class="num">500, behavior: 'smooth'})">আজকের রেজাল্ট দেখুন</button>
-        </div>
+<body>
+  <div class="container">
+    <section class="card">
+        <h3>BOMBAY-GOLD</h3>
+        <p>লাইভ রেজাল্ট আপডেট সিস্টেম</p>
     </section>
 
-    <div class=class="str">"notice-bar" id=class="str">"noticeBar">⏳ নোটিশ লোড হচ্ছে...</div>
-
-    <div class=class="str">"live-button-wrapper">
-      <div class=class="str">"status-button" id=class="str">"liveStatusButton">OFF</div>
+    <div class="card" id="noticeBar">📢 লোড হচ্ছে...</div>
+    
+    <div style="text-align: center; margin: 1rem 0;">
+      <div id="liveStatusButton" class="btn">OFF</div>
     </div>
 
-    <div class=class="str">"result-section" id=class="str">"resultSection">
-      <div class=class="str">"result-title">📋 আজকের রেজাল্ট</div>
-      <div class=class="str">"result-list" id=class="str">"resultListContainer">
-        <div class=class="str">"empty-message">কোনো রেজাল্ট আপডেট নেই</div>
-      </div>
+    <div class="card" id="resultSection">
+      <div style="font-weight: 700; color: var(--primary-gold); margin-bottom: 1rem;">📋 আজকের রেজাল্ট</div>
+      <div id="resultListContainer"></div>
     </div>
+  </div>
 
-    <div class=class="str">"footer-section">© ২০২৫ লাইভ রেজাল
+  <script>
+    // ফায়ারবেস লজিক এবং ইনডেক্স রেন্ডারিং
+    const db = firebase.database();
+    
+    // সিস্টেম স্ট্যাটাস রেন্ডার
+    db.ref('systemStatus').on('value', (snap) => {
+        const isOn = snap.val()?.isOn;
+        const btn = document.getElementById('liveStatusButton');
+        btn.textContent = isOn ? 'LIVE ON' : 'OFFLINE';
+        btn.className = isOn ? 'btn pulse-animation live-on' : 'btn live-off';
+    });
+
+    // রেজাল্ট আপডেট রেন্ডার
+    db.ref('results').on('value', (snap) => {
+        const list = document.getElementById('resultListContainer');
+        list.innerHTML = '';
+        const data = snap.val();
+        if(!data) { list.innerHTML = '<p>কোনো রেজাল্ট নেই</p>'; return; }
+        
+        Object.values(data).forEach(row => {
+            list.innerHTML += `
+                <div class="card" style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                    <span>🕒 ${row.time}</span>
+                    <span style="font-weight:bold; color:var(--primary-gold)">🏆 ${row.result}</span>
+                </div>`;
+        });
+    });
+  </script>
+</body>
+</html>
