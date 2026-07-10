@@ -3,13 +3,15 @@ import firebase from class="str">'firebase/app';
 import class="str">'firebase/database';
 
 const firebaseConfig = {
-  apiKey: class="str">"YOUR_API_KEY",
-  authDomain: class="str">"YOUR_AUTH_DOMAIN",
-  databaseURL: class="str">"YOUR_DATABASE_URL",
-  projectId: class="str">"YOUR_PROJECT_ID",
-  storageBucket: class="str">"YOUR_STORAGE_BUCKET",
-  messagingSenderId: class="str">"YOUR_MESSAGING_SENDER_ID",
-  appId: class="str">"YOUR_APP_ID"
+  apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
+    authDomain: "live-result-b9155.firebaseapp.com",
+    databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "live-result-b9155",
+    storageBucket: "live-result-b9155.firebasestorage.app",
+    messagingSenderId: "495121483481",
+    appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
+    measurementId: "G-DFDW40QF87"
+
 };
 
 if (!firebase.apps.length) {
