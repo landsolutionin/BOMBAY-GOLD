@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Sub-Admin Panel</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f4f4f4; text-align: center; }
+        .card { background: white; padding: 30px; margin: 20px auto; width: 350px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .dashboard { width: 80%; max-width: 600px; }
+        input, button { padding: 10px; margin: 10px 0; width: 90%; }
+        .btn-green { background: green; color: white; border: none; cursor: pointer; }
+        .btn-red { background: red; color: white; border: none; cursor: pointer; }
+        .hidden { display: none; }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+    <h2>Sub-Admin Portal</h2>
+
+    <!-- Step 1: Login -->
+    <div id="login-sec" class="card">
+        <h3>Sub-Admin Login</h3>
+        <input type="email" id="sub-email" placeholder="Sub-Admin Email">
+        <input type="password" id="sub-pass" placeholder="Password">
+        <button class="btn-green" onclick="loginSubAdmin()">Login & Verify</button>
+    </div>
+
+    <!-- Step 2: Request & Code Verification -->
+    <div id="code-sec" class="card hidden">
+        <h3>Approval Required</h3>
+        <button class="btn-red" onclick="requestAccess()">1. Send Request to Main Admin</button>
+        <p>অ্যাডমিন অ্যাক্সেস দিলে ৬-সংখ্যার কোডটি নিচে বসান:</p>
+        <input type="text" id="access-code" placeholder="Enter 6-digit Code">
+        <button class="btn-green" onclick="verifyCode()">2. Verify Code</button>
+    </div>
+
+    <!-- Step 3: Dashboard -->
+    <div id="dashboard-sec" class="card dashboard hidden">
+        <button class="btn-red" onclick="logoutSubAdmin()" style="float:right;">Logout</button>
+        <h3>Sub-Admin Dashboard</h3>
+        <div style="text-align: left; padding: 10px;">
+            <input type="date" id="res-date" required>
+            <input type="text" id="res-time" placeholder="Time (e.g. 10:20 AM)" required>
+            <input type="text" id="res-patti" placeholder="Patti (e.g. 456)" required>
+            <input type="text" id="res-single" placeholder="Single (e.g. 5)" required>
+            <button class="btn-green" onclick="submitResult()">Submit Result</button>
+            <p id="submit-status"></p>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyABwusy3oZXqh353loJ1QorBsUMWxQF08I",
+            databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "live-result-b9155"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        function loginSubAdmin() {
+            const email = document.getElementById('sub-email').value;
+            const pass = document.getElementById('sub-pass').value;
+            auth.signInWithEmailAndPassword(email, pass).then(() => {
+                document.getElementById('login-sec').classList.add('hidden');
+                document.getElementById('code-sec').classList.remove('hidden');
+            }).catch(err => alert("Error: " + err.message));
+        }
+
+        function logoutSubAdmin() {
+            auth.signOut().then(() => location.reload());
+        }
+
+        function requestAccess() {
+            db.ref('auth_data/sub_admin_request').set(true);
+            alert("মেইন অ্যাডমিনের কাছে রিকোয়েস্ট পাঠানো হয়েছে।");
+        }
+
+        function verifyCode() {
+            const code = document.getElementById('access-code').value;
+            db.ref('auth_data/generated_code').once('value').then(snap => {
+                if(snap.val() === code && code !== "") {
+                    document.getElementById('code-sec').classList.add('hidden');
+                    document.getElementById('dashboard-sec').classList.remove('hidden');
+                    db.ref('auth_data/generated_code').set(""); 
+                } else {
+                    alert("❌ ভুল কোড!");
+                }
+            });
+        }
+
+        function submitResult() {
+            const date = document.getElementById('res-date').value;
+            const time = document.getElementById('res-time').value;
+            const patti = document.getElementById('res-patti').value;
+            const single = document.getElementById('res-single').value;
+            const status = document.getElementById('submit-status');
+            
+            if(!date || !time || !patti || !single) return;
+            db.ref(`results/${date}/${time}`).set({ patti: patti, single: single })
+            .then(() => {
+                status.innerText = "✔ Successfully Added!";
+                status.style.color = "green";
+                setTimeout(() => status.innerText = "", 3000);
+            });
+        }
+    </script>
+</body>
+</html>
