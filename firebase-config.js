@@ -1,11 +1,15 @@
 // আপনার ফায়ারবেস কনসোলের কনফিগ এখানে বসান
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
+  authDomain: "live-result-b9155.firebaseapp.com",
+  databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "live-result-b9155",
+  storageBucket: "live-result-b9155.firebasestorage.app",
+  messagingSenderId: "495121483481",
+  appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
+  measurementId: "G-DFDW40QF87"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
