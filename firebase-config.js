@@ -1,17 +1,12 @@
-// BOMBAY GOLD - Secure Firebase Configuration
+// আপনার ফায়ারবেস কনসোলের কনফিগ এখানে বসান
 const firebaseConfig = {
-  apiKey: "AIzaSyABwusy3oZXqh3531oJ1QorBsUMwxQF87M", 
-  authDomain: "live-result-b9155.firebaseapp.com",
-  projectId: "live-result-b9155",
-  storageBucket: "live-result-b9155.appspot.com",
-  messagingSenderId: "495121483481",
-  appId: "1:495121483481:web:8e8bf65c71ea3d31ec6...",
-  measurementId: "G-DFDl4QRF87"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
-
-// ফায়ারবেস ইনিশিয়ালাইজেশন
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
