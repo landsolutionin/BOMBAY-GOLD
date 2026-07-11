@@ -1,49 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-    <title>Admin Panel</title>
+    <meta charset="UTF-8">
+    <title>Main Admin Panel</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #e9ecef; }
+        .admin-card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        input, button { padding: 10px; margin: 5px; }
+        .success { color: green; font-weight: bold; }
+        .btn-red { background: red; color: white; border: none; cursor: pointer; }
+        .btn-green { background: green; color: white; border: none; cursor: pointer; }
+        .hidden { display: none; }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-    <h3>রেজাল্ট যোগ করুন</h3>
-    <input type="date" id="dateInput">
-    <input type="text" id="timeInput" placeholder="সময় (যেমন: 10:20 AM)">
-    <input type="text" id="resultInput" placeholder="রেজাল্ট (যেমন: 270-9)">
-    <button onclick="saveData()">পাবলিশ করুন</button>
 
-    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-database.js"></script>
+    <h2>Main Admin Control Panel</h2>
+
+    <!-- Login Section -->
+    <div id="login-sec" class="admin-card">
+        <h3>Admin Login</h3>
+        <input type="email" id="admin-email" placeholder="Admin Email">
+        <input type="password" id="admin-pass" placeholder="Password">
+        <button class="btn-green" onclick="loginAdmin()">Login</button>
+    </div>
+
+    <!-- Dashboard Section (Hidden by default) -->
+    <div id="dashboard-sec" class="hidden">
+        <button class="btn-red" onclick="logoutAdmin()" style="float:right;">Logout</button>
+        <div class="admin-card">
+            <h3>🔒 Sub-Admin Access Control</h3>
+            <p id="request-status" style="font-weight: bold; color: gray;">No pending request...</p>
+            <button id="generate-btn" class="btn-green hidden" onclick="generateAccessCode()">Grant Access & Generate Code</button>
+            <p id="display-code" style="font-size: 24px; color: blue; font-weight: bold; letter-spacing: 2px;"></p>
+        </div>
+
+        <div class="admin-card">
+            <h3>1. Website Controls</h3>
+            <button id="toggleLiveBtn" class="btn-green">Toggle Live Status</button>
+            <button id="toggleSectionBtn" class="btn-red">Hide/Show Result Section</button>
+        </div>
+
+        <div class="admin-card">
+            <h3>2. Add / Edit Result</h3>
+            <input type="date" id="res-date" required>
+            <input type="text" id="res-time" placeholder="Time (e.g. 10:20 AM)" required>
+            <input type="text" id="res-patti" placeholder="Patti (e.g. 456)" required>
+            <input type="text" id="res-single" placeholder="Single (e.g. 5)" required>
+            <button onclick="submitResult()">Submit Result</button>
+            <span id="submit-status"></span>
+        </div>
+
+        <div class="admin-card">
+            <h3>3. Delete Result</h3>
+            <input type="date" id="del-date" required>
+            <input type="text" id="del-time" placeholder="Time to delete">
+            <button class="btn-red" onclick="deleteResult()">Delete Date/Time</button>
+        </div>
+    </div>
 
     <script>
-        // আপনার দেওয়া কনফিগারেশন ঠিক করে বসানো হয়েছে
-        var firebaseConfig = {
-            apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
-            authDomain: "live-result-b9155.firebaseapp.com",
+        const firebaseConfig = {
+            apiKey: "AIzaSyABwusy3oZXqh353loJ1QorBsUMWxQF08I",
             databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "live-result-b9155",
-            storageBucket: "live-result-b9155.firebasestorage.app",
-            messagingSenderId: "495121483481",
-            appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
-            measurementId: "G-DFDW40QF8"
+            projectId: "live-result-b9155"
         };
-        
         firebase.initializeApp(firebaseConfig);
-        var database = firebase.database();
+        const db = firebase.database();
+        const auth = firebase.auth();
 
-        function saveData() {
-            var date = document.getElementById("dateInput").value;
-            var time = document.getElementById("timeInput").value;
-            var res = document.getElementById("resultInput").value;
+        // 1. Authentication Logic
+        function loginAdmin() {
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+            auth.signInWithEmailAndPassword(email, pass).then(() => {
+                document.getElementById('login-sec').classList.add('hidden');
+                document.getElementById('dashboard-sec').classList.remove('hidden');
+                initDashboard();
+            }).catch(err => alert("Error: " + err.message));
+        }
 
-            // ডাটাবেসে পুশ করা হচ্ছে
-            firebase.database().ref('results/').push({
-                date: date,
-                time: time,
-                result: res
-            }).then(function() {
-                alert("আপডেট সফল হয়েছে!");
-            }).catch(function(error) {
-                alert("ভুল হয়েছে: " + error.message);
+        function logoutAdmin() {
+            auth.signOut().then(() => location.reload());
+        }
+
+        // 2. Dashboard Logic
+        function initDashboard() {
+            // Sub-Admin Request Listener
+            db.ref('auth_data/sub_admin_request').on('value', snap => {
+                const isRequested = snap.val();
+                const statusText = document.getElementById('request-status');
+                const genBtn = document.getElementById('generate-btn');
+
+                if(isRequested) {
+                    statusText.innerText = "🚨 Sub-Admin is requesting access!";
+                    statusText.style.color = "red";
+                    genBtn.classList.remove('hidden');
+                } else {
+                    statusText.innerText = "No pending request...";
+                    statusText.style.color = "gray";
+                    genBtn.classList.add('hidden');
+                    document.getElementById('display-code').innerText = "";
+                }
             });
+
+            // Toggle Settings
+            let currentIsLive = true;
+            let currentShowRes = true;
+            db.ref('settings').on('value', snap => {
+                if(snap.val()) {
+                    currentIsLive = snap.val().isLive;
+                    currentShowRes = snap.val().showResults;
+                }
+            });
+            document.getElementById('toggleLiveBtn').addEventListener('click', () => {
+                db.ref('settings').update({ isLive: !currentIsLive });
+            });
+            document.getElementById('toggleSectionBtn').addEventListener('click', () => {
+                db.ref('settings').update({ showResults: !currentShowRes });
+            });
+        }
+
+        function generateAccessCode() {
+            const randomCode = Math.floor(100000 + Math.random() * 900000).toString(); 
+            db.ref('auth_data').update({
+                generated_code: randomCode,
+                sub_admin_request: false 
+            }).then(() => {
+                document.getElementById('display-code').innerText = "Code: " + randomCode;
+            });
+        }
+
+        function submitResult() {
+            const date = document.getElementById('res-date').value;
+            const time = document.getElementById('res-time').value;
+            const patti = document.getElementById('res-patti').value;
+            const single = document.getElementById('res-single').value;
+            const status = document.getElementById('submit-status');
+
+            if(!date || !time || !patti || !single) return;
+            db.ref(`results/${date}/${time}`).set({ patti: patti, single: single })
+            .then(() => {
+                status.innerHTML = "✔ Successfully Added!";
+                status.className = "success";
+                setTimeout(() => status.innerHTML = "", 3000);
+            });
+        }
+
+        function deleteResult() {
+            const date = document.getElementById('del-date').value;
+            const time = document.getElementById('del-time').value;
+            if(!date) return;
+            if(confirm(`আপনি কি নিশ্চিত যে আপনি ডেটা মুছতে চান?`)) {
+                let refPath = time ? `results/${date}/${time}` : `results/${date}`;
+                db.ref(refPath).remove().then(() => alert("Data Deleted!"));
+            }
         }
     </script>
 </body>
