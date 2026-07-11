@@ -2,16 +2,97 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>Sub-Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sub-Admin Panel - BOMBAY GOLD</title>
     <style>
-        body { font-family: Arial; padding: 20px; background: #f4f4f4; text-align: center; }
-        .card { background: white; padding: 30px; margin: 20px auto; width: 350px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .dashboard { width: 80%; max-width: 600px; }
-        input, button { padding: 10px; margin: 10px 0; width: 90%; }
-        .btn-green { background: green; color: white; border: none; cursor: pointer; }
-        .btn-red { background: red; color: white; border: none; cursor: pointer; }
-        .hidden { display: none; }
+        /* মডার্ন ও কালারফুল ডিজাইন স্টাইল */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', Arial, sans-serif; }
+        
+        body { 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+            padding: 20px; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h2 { 
+            text-align: center; 
+            color: #000851; 
+            margin-top: 20px;
+            margin-bottom: 25px; 
+            font-size: 28px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .card { 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 30px; 
+            margin-bottom: 25px; 
+            border-radius: 12px; 
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: transform 0.2s ease;
+        }
+        
+        .dashboard {
+            max-width: 650px;
+        }
+        
+        .card:hover { transform: translateY(-2px); }
+        
+        h3 { color: #2c3e50; margin-bottom: 15px; font-size: 18px; border-left: 4px solid #667eea; padding-left: 10px; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border: 2px solid #dfe6e9; 
+            border-radius: 8px; 
+            font-size: 15px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        
+        input:focus { border-color: #667eea; }
+        
+        button { 
+            width: 100%;
+            padding: 12px 20px; 
+            margin: 10px 0; 
+            border: none; 
+            border-radius: 8px; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        
+        button:hover { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        
+        /* ইউনিক গ্রেডিয়েন্ট বাটন কালার */
+        button:not(.btn-green):not(.btn-red) {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-green { background: linear-gradient(45deg, #00b09b, #96c93d); }
+        .btn-red { background: linear-gradient(45deg, #ff416c, #ff4b2b); }
+        
+        .success { color: #27ae60; font-weight: bold; margin-top: 8px; display: inline-block; }
+        .hidden { display: none !important; }
+        
+        p { color: #555; font-size: 14px; margin-top: 5px; }
     </style>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -20,7 +101,6 @@
 
     <h2>Sub-Admin Portal</h2>
 
-    <!-- Step 1: Login -->
     <div id="login-sec" class="card">
         <h3>Sub-Admin Login</h3>
         <input type="email" id="sub-email" placeholder="Sub-Admin Email">
@@ -28,45 +108,43 @@
         <button class="btn-green" onclick="loginSubAdmin()">Login & Verify</button>
     </div>
 
-    <!-- Step 2: Request & Code Verification -->
     <div id="code-sec" class="card hidden">
         <h3>Approval Required</h3>
         <button class="btn-red" onclick="requestAccess()">1. Send Request to Main Admin</button>
-        <p>অ্যাডমিন অ্যাক্সেস দিলে ৬-সংখ্যার কোডটি নিচে বসান:</p>
+        <p style="margin-top: 15px; font-weight: bold;">অ্যাডমিন অ্যাক্সেস দিলে ৬-সংখ্যার কোডটি নিচে বসান:</p>
         <input type="text" id="access-code" placeholder="Enter 6-digit Code">
         <button class="btn-green" onclick="verifyCode()">2. Verify Code</button>
     </div>
 
-    <!-- Step 3: Dashboard -->
     <div id="dashboard-sec" class="card dashboard hidden">
-        <button class="btn-red" onclick="logoutSubAdmin()" style="float:right;">Logout</button>
+        <div style="overflow: hidden; margin-bottom: 10px;">
+            <button class="btn-red" onclick="logoutSubAdmin()" style="float:right; width: auto; margin: 0; padding: 8px 15px;">Logout</button>
+        </div>
         <h3>Sub-Admin Dashboard</h3>
-        <div style="text-align: left; padding: 10px;">
+        <div style="text-align: left; margin-top: 15px;">
             <input type="date" id="res-date" required>
             <input type="text" id="res-time" placeholder="Time (e.g. 10:20 AM)" required>
             <input type="text" id="res-patti" placeholder="Patti (e.g. 456)" required>
             <input type="text" id="res-single" placeholder="Single (e.g. 5)" required>
             <button class="btn-green" onclick="submitResult()">Submit Result</button>
-            <p id="submit-status"></p>
+            <span id="submit-status"></span>
         </div>
     </div>
 
     <script>
+        // ফায়ারবেস কনফিগারেশন
         const firebaseConfig = {
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
-  authDomain: "live-result-b9155.firebaseapp.com",
-  databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "live-result-b9155",
-  storageBucket: "live-result-b9155.firebasestorage.app",
-  messagingSenderId: "495121483481",
-  appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
-  measurementId: "G-DFDW40QF87"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
+            apiKey: "AIzaSyABwusy3oZXqh3531oJlQorBsUMWxQF08I",
+            authDomain: "live-result-b9155.firebaseapp.com",
+            databaseURL: "https://live-result-b9155-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "live-result-b9155",
+            storageBucket: "live-result-b9155.firebasestorage.app",
+            messagingSenderId: "495121483481",
+            appId: "1:495121483481:web:8e8bf65c71ea3d31ec60c8",
+            measurementId: "G-DFDW40QF87"
+        };
+
+        // ফায়ারবেস ইনিশিয়ালাইজেশন
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const auth = firebase.auth();
@@ -74,6 +152,12 @@ const auth = firebase.auth();
         function loginSubAdmin() {
             const email = document.getElementById('sub-email').value;
             const pass = document.getElementById('sub-pass').value;
+            
+            if(!email || !pass) {
+                alert("দয়া করে ইমেইল এবং পাসওয়ার্ড লিখুন।");
+                return;
+            }
+
             auth.signInWithEmailAndPassword(email, pass).then(() => {
                 document.getElementById('login-sec').classList.add('hidden');
                 document.getElementById('code-sec').classList.remove('hidden');
@@ -85,21 +169,29 @@ const auth = firebase.auth();
         }
 
         function requestAccess() {
-            db.ref('auth_data/sub_admin_request').set(true);
-            alert("মেইন অ্যাডমিনের কাছে রিকোয়েস্ট পাঠানো হয়েছে।");
+            db.ref('auth_data/sub_admin_request').set(true)
+            .then(() => {
+                alert("মেইন অ্যাডমিনের কাছে সফলভাবে রিকোয়েস্ট পাঠানো হয়েছে।");
+            }).catch(err => alert("Error: " + err.message));
         }
 
         function verifyCode() {
             const code = document.getElementById('access-code').value;
+            
+            if(!code) {
+                alert("দয়া করে মেইন অ্যাডমিনের দেওয়া ৬-সংখ্যার কোডটি লিখুন।");
+                return;
+            }
+
             db.ref('auth_data/generated_code').once('value').then(snap => {
                 if(snap.val() === code && code !== "") {
                     document.getElementById('code-sec').classList.add('hidden');
                     document.getElementById('dashboard-sec').classList.remove('hidden');
-                    db.ref('auth_data/generated_code').set(""); 
+                    db.ref('auth_data/generated_code').set(""); // সুরক্ষার জন্য কোডটি রিসেট করা
                 } else {
-                    alert("❌ ভুল কোড!");
+                    alert("❌ ভুল কোড! দয়া করে সঠিক কোড দিন।");
                 }
-            });
+            }).catch(err => alert("Error: " + err.message));
         }
 
         function submitResult() {
@@ -109,13 +201,21 @@ const auth = firebase.auth();
             const single = document.getElementById('res-single').value;
             const status = document.getElementById('submit-status');
             
-            if(!date || !time || !patti || !single) return;
+            if(!date || !time || !patti || !single) {
+                alert("সবগুলো ঘর পূরণ করুন!");
+                return;
+            }
+
             db.ref(`results/${date}/${time}`).set({ patti: patti, single: single })
             .then(() => {
                 status.innerText = "✔ Successfully Added!";
-                status.style.color = "green";
+                status.className = "success";
+                // ইনপুট ক্লিয়ার করা (তারিখ বাদে)
+                document.getElementById('res-time').value = "";
+                document.getElementById('res-patti').value = "";
+                document.getElementById('res-single').value = "";
                 setTimeout(() => status.innerText = "", 3000);
-            });
+            }).catch(err => alert("Error: " + err.message));
         }
     </script>
 </body>
