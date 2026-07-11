@@ -2,15 +2,30 @@
 <html>
 <head><title>Admin Panel</title></head>
 <body>
-    <h2>রেজাল্ট আপডেট করুন</h2>
-    <input type="text" id="date" placeholder="তারিখ (যেমন: 11/07/2026)">
-    <input type="text" id="time" placeholder="সময় (যেমন: 10:20 AM)">
-    <input type="text" id="res" placeholder="রেজাল্ট (যেমন: 270-9)">
-    <button onclick="save()">সেভ করুন</button>
+    <<h3>রেজাল্ট যোগ করুন</h3>
+<input type="date" id="dateInput"> <input type="text" id="timeInput" placeholder="সময় (যেমন: 10:20 AM)">
+<input type="text" id="resultInput" placeholder="রেজাল্ট (যেমন: 270-9)">
+<button onclick="addData()">পাবলিশ করুন</button>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-database.js"></script>
+<script>
+    var firebaseConfig = { /* আপনার কনফিগারেশন */ };
+    firebase.initializeApp(firebaseConfig);
+
+    function addData() {
+        var date = document.getElementById("dateInput").value;
+        var time = document.getElementById("timeInput").value;
+        var res = document.getElementById("resultInput").value;
+
+        // ডাটাবেসে একটি নতুন এন্ট্রি পুশ করা হচ্ছে
+        firebase.database().ref('allResults/').push({
+            date: date,
+            time: time,
+            result: res
+        }).then(() => alert("যোগ করা হয়েছে!"));
+    }
+</script>
 
         const firebaseConfig = { /* আপনার firebaseConfig এখানে দিন */ };
         const app = initializeApp(firebaseConfig);
