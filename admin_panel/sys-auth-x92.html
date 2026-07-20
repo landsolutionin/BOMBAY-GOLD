@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সিস্টেম কোর কন্ট্রোল</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0b0f19;
+            color: #38bdf8;
+            padding: 40px;
+        }
+        .panel-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #0284c7;
+            background-color: #111827;
+            padding: 25px;
+            border-radius: 5px;
+        }
+        .sys-btn {
+            background-color: #0284c7;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            margin-right: 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .sys-btn:hover { background-color: #0369a1; }
+        .danger-btn { background-color: #b91c1c; }
+        .danger-btn:hover { background-color: #991b1b; }
+    </style>
+</head>
+<body>
+
+<div class="panel-container">
+    <h1>গেম সিস্টেম ব্যাকএন্ড (কোর কন্ট্রোল)</h1>
+    <p>স্ট্যাটাস: <span style="color: #4ade80;">অনলাইন ও সুরক্ষিত</span></p>
+    <hr style="border-color: #1e293b;">
+    
+    <h3>কন্ট্রোল অ্যাকশন:</h3>
+    <button class="sys-btn" onclick="alert('গেম ডেটা সিঙ্ক করা হচ্ছে...')">ডেটা সিঙ্ক করুন</button>
+    <button class="sys-btn" onclick="alert('সার্ভার ক্যাশ ক্লিয়ার করা হয়েছে।')">ক্যাশ ক্লিয়ার করুন</button>
+    <button class="sys-btn danger-btn" onclick="alert('সতর্কতা: গেম রিবুট হচ্ছে!')">সিস্টেম রিবুট</button>
+</div>
+
+</body>
+</html>
