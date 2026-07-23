@@ -123,6 +123,41 @@
             </div>
 
             <!-- MODULE 3 END -->
+
+            <!-- MODULE 4 START: BETTING PANEL & SELECTED SUMMARY -->
+            
+            <div class="bottom-bet-container">
+                
+                <!-- Quick Bet Amount Selector -->
+                <div class="bet-chip-section">
+                    <span class="label-text">BET AMOUNT:</span>
+                    <button class="btn-chip" onclick="setBetAmount(10)">৳10</button>
+                    <button class="btn-chip" onclick="setBetAmount(20)">৳20</button>
+                    <button class="btn-chip" onclick="setBetAmount(50)">৳50</button>
+                    <button class="btn-chip" onclick="setBetAmount(100)">৳100</button>
+                    <input type="number" id="custom-bet-input" placeholder="Custom" min="1" onchange="setCustomAmount(this.value)">
+                </div>
+
+                <!-- Selected Items List & Cart -->
+                <div class="selected-summary-box">
+                    <div class="summary-header">
+                        <span>SELECTED ITEMS (<span id="selected-count">0</span>)</span>
+                        <span class="total-pts">TOTAL: <strong id="total-bet-points">0</strong> Pts</span>
+                    </div>
+                    <div class="selected-items-list" id="selected-items-display">
+                        <span class="empty-msg">কোনো আইটেম সিলেক্ট করা হয়নি</span>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-btn-group">
+                        <button class="btn-reset" onclick="clearAllSelections()">Reset</button>
+                        <button class="btn-submit-bet" onclick="submitBetAndPrint()">Submit Bet / Print</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MODULE 4 END -->
         </main>
     </div>
 
