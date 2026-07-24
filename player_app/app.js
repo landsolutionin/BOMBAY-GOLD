@@ -676,16 +676,19 @@ function onTripleCellClick(item) {
 }
 
 // MODULE 3 END
+
 // ==========================================
 // MODULE 4 START: BET SELECTION & CART SYSTEM
 // ==========================================
 
+// Set default values inside existing AppState
 AppState.selectedBetAmount = 10;
-AppState.selectedCart = []; // Hold selected bet items
+AppState.selectedCart = [];
 
 function setBetAmount(amount) {
     AppState.selectedBetAmount = amount;
-    document.getElementById('custom-bet-input').value = '';
+    const customInput = document.getElementById('custom-bet-input');
+    if (customInput) customInput.value = '';
     console.log("Selected Bet Amount:", amount);
 }
 
@@ -709,7 +712,6 @@ function addBetToCart(uniqueId, digitVal, wordVal) {
     const existingIndex = AppState.selectedCart.findIndex(i => i.uniqueId === uniqueId);
 
     if (existingIndex > -1) {
-        // Increment amount if already exists
         AppState.selectedCart[existingIndex].amount += AppState.selectedBetAmount;
     } else {
         AppState.selectedCart.push({
@@ -731,9 +733,9 @@ function updateCartDisplay() {
     if (!listContainer) return;
 
     if (AppState.selectedCart.length === 0) {
-        listContainer.innerHTML = '<span class="empty-msg">কোনো আইটেম সিলেক্ট করা হয়নি</span>';
-        countDisplay.innerText = '0';
-        totalDisplay.innerText = '0';
+        listContainer.innerHTML = '<span class="empty-msg">কোনো আইটেম সিলেক্ট করা হয়নি</span>';
+        if (countDisplay) countDisplay.innerText = '0';
+        if (totalDisplay) totalDisplay.innerText = '0';
         return;
     }
 
@@ -753,8 +755,8 @@ function updateCartDisplay() {
         listContainer.appendChild(badge);
     });
 
-    countDisplay.innerText = AppState.selectedCart.length;
-    totalDisplay.innerText = totalPoints.toLocaleString();
+    if (countDisplay) countDisplay.innerText = AppState.selectedCart.length;
+    if (totalDisplay) totalDisplay.innerText = totalPoints.toLocaleString();
 }
 
 function clearAllSelections() {
@@ -764,27 +766,24 @@ function clearAllSelections() {
 
 function submitBetAndPrint() {
     if (AppState.selectedCart.length === 0) {
-        alert("দয়া করে আগে বেট সিলেক্ট করুন!");
+        alert("দয়া করে আগে বেট সিলেক্ট করুন!");
         return;
     }
 
     let totalCost = AppState.selectedCart.reduce((sum, item) => sum + item.amount, 0);
 
     if (AppState.playPoints < totalCost) {
-        alert("আপনার প্লে পয়েন্ট অপর্যাপ্ত!");
+        alert("আপনার প্লে পয়েন্ট অপর্যাপ্ত!");
         return;
     }
 
-    // Deduct Points
     AppState.playPoints -= totalCost;
-    document.getElementById('play-points').innerText = AppState.playPoints.toLocaleString();
+    const playPtsEl = document.getElementById('play-points');
+    if (playPtsEl) playPtsEl.innerText = AppState.playPoints.toLocaleString();
 
-    alert(`বেট সফল হয়েছে! মোট পয়েন্ট খরচ: ৳${totalCost}\nস্লিপ প্রিন্ট আউট নেওয়া হচ্ছে...`);
+    alert(`বেট সফল হয়েছে! মোট পয়েন্ট খরচ: ৳${totalCost}\nস্লিপ প্রিন্ট আউট নেওয়া হচ্ছে...`);
     
-    // Trigger Print System
     window.print();
-
-    // Clear Cart After Bet
     clearAllSelections();
 }
 
